@@ -366,6 +366,7 @@
         font-size: 0.73rem;
         color: var(--gray-500);
         margin-top: 2px;
+        line-height: 1.4;
       }
       .metric-card.highlight {
         background: var(--green-600);
@@ -518,7 +519,132 @@
         margin-top: 20px;
       }
 
-      /* ─── RESPONSIVE ─── */
+      /* ══════════════════════════════════════════
+         PENAMBAHAN CSS BARU (di luar yang sudah ada)
+         ══════════════════════════════════════════ */
+
+      /* Tab navigasi 3 fitur */
+      .tab-nav {
+        display: flex;
+        gap: 8px;
+        background: white;
+        border: 1px solid var(--green-100);
+        border-radius: var(--radius);
+        padding: 6px;
+        margin: 0 0 20px;
+        box-shadow: var(--shadow-card);
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        flex: 1;
+        min-width: 140px;
+        padding: 12px 10px;
+        border: none;
+        background: transparent;
+        color: var(--gray-500);
+        font-weight: 700;
+        font-size: 0.85rem;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .tab-btn:hover {
+        background: var(--green-50);
+        color: var(--green-700);
+      }
+      .tab-btn.active {
+        background: linear-gradient(135deg, var(--green-600), var(--green-500));
+        color: white;
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+      }
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+
+      /* Hint / tips kecil di bawah input */
+      .hint {
+        display: block;
+        font-size: 0.7rem;
+        color: var(--gray-400);
+        margin-top: 4px;
+        line-height: 1.4;
+      }
+
+      /* Kotak tips akurasi di atas form */
+      .tips-box {
+        background: var(--green-50);
+        border: 1px dashed var(--green-300);
+        border-radius: var(--radius-sm);
+        padding: 12px 16px;
+        font-size: 0.8rem;
+        color: var(--green-800);
+        line-height: 1.6;
+        margin-bottom: 18px;
+      }
+      .tips-box strong {
+        color: var(--green-700);
+      }
+
+      /* Panduan / glossary list */
+      .glossary {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 14px;
+      }
+      .glossary-item dt {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: var(--green-800);
+        margin-bottom: 3px;
+      }
+      .glossary-item dd {
+        font-size: 0.78rem;
+        color: var(--gray-500);
+        line-height: 1.55;
+      }
+
+      /* Hasil untung/rugi & average */
+      .pl-banner {
+        padding: 22px;
+        border-radius: var(--radius);
+        text-align: center;
+        border: 2px solid;
+        margin-bottom: 18px;
+      }
+      .pl-untung {
+        background: #f0fdf4;
+        border-color: #22c55e;
+        color: #15803d;
+      }
+      .pl-rugi {
+        background: #fef2f2;
+        border-color: #ef4444;
+        color: #7f1d1d;
+      }
+      .pl-banner .pl-pct {
+        font-size: 2.4rem;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .pl-banner .pl-label {
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin-top: 6px;
+      }
+
+      @media (max-width: 640px) {
+        .tab-nav {
+          flex-direction: column;
+        }
+        .tab-btn {
+          min-width: 0;
+        }
+      }
+
+      /* ─── RESPONSIVE (asli) ─── */
       @media (max-width: 640px) {
         .header-badge {
           display: none;
@@ -575,296 +701,621 @@
       <h1>Temukan Harga Wajar Sahammu</h1>
       <p>
         Analisis valuasi komprehensif menggunakan 5 metode valuasi terbaik —
-        DCF, PER, PBV, PEG, dan Graham Formula.
+        DCF, PER, PBV (Justified), Graham Number, dan PEG — plus kalkulator
+        untung/rugi dan rata-rata (average) harga saham.
       </p>
       <div class="method-pills">
-        <span class="pill">📊 DCF 40%</span>
+        <span class="pill">📊 DCF 30%</span>
         <span class="pill">📉 PER 25%</span>
-        <span class="pill">📖 PBV 15%</span>
+        <span class="pill">📖 PBV 20%</span>
+        <span class="pill">🧮 Graham 15%</span>
         <span class="pill">🚀 PEG 10%</span>
-        <span class="pill">🧮 Graham 10%</span>
       </div>
     </div>
 
     <main>
-      <!-- INPUT SECTION -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-header-icon">✏️</div>
-          <div>
-            <h2>Data Input Saham</h2>
-            <p>Masukkan data fundamental emiten yang ingin dianalisis</p>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="form-grid">
-            <!-- Identitas -->
-            <div class="form-group form-full">
-              <label>Nama Emiten / Kode Saham</label>
-              <input
-                type="text"
-                id="emiten"
-                placeholder="Contoh: BBCA, TLKM, ASII…"
-              />
-            </div>
-            <div class="form-group">
-              <label>Harga Saham Saat Ini <span class="unit">(Rp)</span></label>
-              <input
-                type="number"
-                id="hargaSaatIni"
-                placeholder="Contoh: 9500"
-              />
-            </div>
-            <div class="form-group">
-              <label
-                >Current EPS (TTM) | Per Share
-                <span class="unit">(Rp)</span></label
-              >
-              <input type="number" id="eps" placeholder="Contoh: 500" />
-            </div>
-            <div class="form-group">
-              <label
-                >Book Value Per Share (Quarter) | Per Share
-                <span class="unit">(Rp)</span></label
-              >
-              <input type="number" id="bvps" placeholder="Contoh: 3000" />
-            </div>
-            <!-- Profitabilitas -->
-            <div class="form-group">
-              <label
-                >Return on Equity (TTM) | Profitability
-                <span class="unit">(%)</span></label
-              >
-              <input type="number" id="roe" placeholder="Contoh: 22" />
-            </div>
-            <div class="form-group">
-              <label
-                >Return on Assets (TTM) | Profitability
-                <span class="unit">(%)</span></label
-              >
-              <input type="number" id="roa" placeholder="Contoh: 12" />
-            </div>
-            <div class="form-group">
-              <label
-                >Net Profit Margin | Profitability
-                <span class="unit">(%)</span></label
-              >
-              <input type="number" id="npm" placeholder="Contoh: 25" />
-            </div>
-            <div class="form-group">
-              <label
-                >Operating Profit Margin | Profitability
-                <span class="unit">(%)</span></label
-              >
-              <input type="number" id="opm" placeholder="Contoh: 30" />
-            </div>
-            <!-- Growth -->
-            <div class="form-group">
-              <label
-                >Revenue (Quarter YoY Growth) | Growth (pc)
-                <span class="unit">(%)</span></label
-              >
-              <input type="number" id="revGrowth" placeholder="Contoh: 12" />
-            </div>
-            <div class="form-group">
-              <label
-                >Net Income (Quarter YoY Growth) | Growth (pc)
-                <span class="unit">(%)</span></label
-              >
-              <input type="number" id="niGrowth" placeholder="Contoh: 18" />
-            </div>
-            <!-- Kesehatan Keuangan -->
-            <div class="form-group">
-              <label
-                >Debt to Equity Ratio (Quarter) | Solvency
-                <span class="unit">(kali)</span></label
-              >
-              <input type="number" id="der" placeholder="Contoh: 0.4" />
-            </div>
-            <div class="form-group">
-              <label
-                >Current Ratio (Quarter) | Solvency
-                <span class="unit">(kali)</span></label
-              >
-              <input type="number" id="cr" placeholder="Contoh: 2.5" />
-            </div>
-
-            <!-- Cash Flow -->
-            <div class="form-group">
-              <label
-                >Free Cash Flow (TTM) | Cash Flow Statement
-                <span class="unit">(Rp juta)</span></label
-              >
-              <input type="number" id="fcf" placeholder="Contoh: 5000" />
-            </div>
-            <div class="form-group">
-              <label
-                >Cash From Operations | Cash Flow Statement
-                <span class="unit">(Rp juta)</span></label
-              >
-              <input type="number" id="ocf" placeholder="Contoh: 7000" />
-            </div>
-            <!-- Dividen -->
-            <div class="form-group">
-              <label
-                >Dividend Yield | Dividend<span class="unit">(%)</span></label
-              >
-              <input type="number" id="divYield" placeholder="Contoh: 3.5" />
-            </div>
-            <div class="form-group">
-              <label
-                >Payout Ratio | Dividend <span class="unit">(%)</span></label
-              >
-              <input type="number" id="dpr" placeholder="Contoh: 40" />
-            </div>
-            <!-- DCF Parameters -->
-            <div class="form-group">
-              <label
-                >Current Shares Outstanding
-                <span class="unit">(juta lembar)</span></label
-              >
-              <input type="number" id="sharesOut" placeholder="Contoh: 1000" />
-            </div>
-            <div class="form-group">
-              <label>
-                Discount Rate
-                <span class="unit">(%)</span>
-              </label>
-
-              <input
-                type="number"
-                id="discountRate"
-                placeholder="Default 12%"
-              />
-
-              <small> Kosongkan jika menggunakan default 12%. </small>
-            </div>
-            <div class="form-group">
-              <label>
-                Terminal Growth Rate
-
-                <span class="unit">(%)</span>
-              </label>
-
-              <input
-                type="number"
-                id="terminalGrowth"
-                placeholder="Default 3%"
-              />
-
-              <small> Kosongkan jika menggunakan default 3%. </small>
-            </div>
-          </div>
-
-          <button class="btn-calc" onclick="calculate()">
-            <span>🔍</span> Hitung Harga Wajar Sekarang
-          </button>
-          <button class="btn-reset" onclick="resetForm()">↺ Reset Form</button>
-        </div>
+      <!-- TAB NAV -->
+      <div class="tab-nav">
+        <button class="tab-btn active" id="tabBtn-fv" onclick="showTab('fv')">
+          💰 Harga Wajar Saham
+        </button>
+        <button class="tab-btn" id="tabBtn-pl" onclick="showTab('pl')">
+          📊 Untung / Rugi
+        </button>
+        <button class="tab-btn" id="tabBtn-avg" onclick="showTab('avg')">
+          🔄 Hitung Average
+        </button>
       </div>
 
-      <!-- RESULTS -->
-      <div id="results">
-        <!-- RECOMMENDATION BANNER -->
-        <div id="recoBanner" class="reco-banner">
-          <div class="reco-score" id="recoScore">—</div>
-          <div class="reco-label" id="recoLabel">—</div>
-          <div class="reco-sub" id="recoSub">—</div>
-        </div>
-
-        <!-- FAIR VALUE SUMMARY -->
+      <!-- ══════════════════════════════════════════
+           TAB 1 — KALKULATOR HARGA WAJAR
+           ══════════════════════════════════════════ -->
+      <div class="tab-panel active" id="tab-fv">
+        <!-- INPUT SECTION -->
         <div class="card">
           <div class="card-header">
-            <div class="card-header-icon">💰</div>
+            <div class="card-header-icon">✏️</div>
             <div>
-              <h2>Ringkasan Valuasi</h2>
-              <p id="summaryEmiten">—</p>
+              <h2>Data Input Saham</h2>
+              <p>Masukkan data fundamental emiten yang ingin dianalisis</p>
             </div>
           </div>
           <div class="card-body">
-            <div class="metric-grid" id="summaryMetrics"></div>
+            <div class="tips-box">
+              💡 <strong>Tips Akurasi:</strong> agar hasil tidak bias oleh satu
+              tahun yang tidak normal (misal ada laba/rugi luar biasa), isi
+              ROE, ROA, NPM, OPM, dan pertumbuhan idealnya dengan
+              <strong>rata-rata 3–5 tahun terakhir</strong>, bukan hanya angka
+              1 kuartal terakhir. Di Stockbit, buka
+              <strong>Keystats → pilih rentang "5Y" / "Annual"</strong>
+              lalu rata-ratakan manual, atau gunakan menu
+              <strong>Historical Financial</strong> untuk melihat tren 5
+              tahun. Field bertanda (opsional) akan membuat hasil jauh lebih
+              akurat jika diisi.
+            </div>
+
+            <div class="form-grid">
+              <!-- Identitas -->
+              <div class="form-group form-full">
+                <label>Nama Emiten / Kode Saham</label>
+                <input
+                  type="text"
+                  id="emiten"
+                  placeholder="Contoh: BBCA, TLKM, ASII…"
+                />
+              </div>
+              <div class="form-group">
+                <label>Harga Saham Saat Ini <span class="unit">(Rp)</span></label>
+                <input
+                  type="number"
+                  id="hargaSaatIni"
+                  placeholder="Contoh: 9500"
+                />
+              </div>
+              <div class="form-group">
+                <label
+                  >Current EPS (TTM) | Per Share
+                  <span class="unit">(Rp)</span></label
+                >
+                <input type="number" id="eps" placeholder="Contoh: 500" />
+                <small class="hint">Earning Per Share 12 bulan terakhir (TTM)</small>
+              </div>
+              <div class="form-group">
+                <label
+                  >Book Value Per Share (Quarter) | Per Share
+                  <span class="unit">(Rp)</span></label
+                >
+                <input type="number" id="bvps" placeholder="Contoh: 3000" />
+                <small class="hint">Ekuitas ÷ jumlah saham beredar</small>
+              </div>
+              <!-- Profitabilitas -->
+              <div class="form-group">
+                <label
+                  >Return on Equity (rata-rata 5th) | Profitability
+                  <span class="unit">(%)</span></label
+                >
+                <input type="number" id="roe" placeholder="Contoh: 22" />
+                <small class="hint">Idealnya rata-rata 5 tahun, bukan 1 kuartal</small>
+              </div>
+              <div class="form-group">
+                <label
+                  >Return on Assets (rata-rata 5th) | Profitability
+                  <span class="unit">(%)</span></label
+                >
+                <input type="number" id="roa" placeholder="Contoh: 12" />
+              </div>
+              <div class="form-group">
+                <label
+                  >Net Profit Margin | Profitability
+                  <span class="unit">(%)</span></label
+                >
+                <input type="number" id="npm" placeholder="Contoh: 25" />
+              </div>
+              <div class="form-group">
+                <label
+                  >Operating Profit Margin | Profitability
+                  <span class="unit">(%)</span></label
+                >
+                <input type="number" id="opm" placeholder="Contoh: 30" />
+              </div>
+              <!-- Growth -->
+              <div class="form-group">
+                <label
+                  >Revenue (Quarter YoY Growth) | Growth (pc)
+                  <span class="unit">(%)</span></label
+                >
+                <input type="number" id="revGrowth" placeholder="Contoh: 12" />
+              </div>
+              <div class="form-group">
+                <label
+                  >Net Income (Quarter YoY Growth) | Growth (pc)
+                  <span class="unit">(%)</span></label
+                >
+                <input type="number" id="niGrowth" placeholder="Contoh: 18" />
+              </div>
+              <div class="form-group">
+                <label
+                  >EPS/Laba Growth Rata-rata 3-5 Tahun (opsional)
+                  <span class="unit">(% CAGR)</span></label
+                >
+                <input
+                  type="number"
+                  id="growthAvgLong"
+                  placeholder="Contoh: 14"
+                />
+                <small class="hint"
+                  >Jika diisi, dipakai menggantikan growth 1 kuartal di atas
+                  (lebih stabil &amp; akurat untuk PEG, Graham, DCF)</small
+                >
+              </div>
+              <!-- Kesehatan Keuangan -->
+              <div class="form-group">
+                <label
+                  >Debt to Equity Ratio (Quarter) | Solvency
+                  <span class="unit">(kali)</span></label
+                >
+                <input type="number" id="der" placeholder="Contoh: 0.4" />
+              </div>
+              <div class="form-group">
+                <label
+                  >Current Ratio (Quarter) | Solvency
+                  <span class="unit">(kali)</span></label
+                >
+                <input type="number" id="cr" placeholder="Contoh: 2.5" />
+              </div>
+
+              <!-- Cash Flow -->
+              <div class="form-group">
+                <label
+                  >Free Cash Flow (TTM) | Cash Flow Statement
+                  <span class="unit">(Rp juta)</span></label
+                >
+                <input type="number" id="fcf" placeholder="Contoh: 5000" />
+              </div>
+              <div class="form-group">
+                <label
+                  >Cash From Operations | Cash Flow Statement
+                  <span class="unit">(Rp juta)</span></label
+                >
+                <input type="number" id="ocf" placeholder="Contoh: 7000" />
+              </div>
+              <!-- Dividen -->
+              <div class="form-group">
+                <label
+                  >Dividend Yield | Dividend<span class="unit">(%)</span></label
+                >
+                <input type="number" id="divYield" placeholder="Contoh: 3.5" />
+              </div>
+              <div class="form-group">
+                <label
+                  >Payout Ratio | Dividend <span class="unit">(%)</span></label
+                >
+                <input type="number" id="dpr" placeholder="Contoh: 40" />
+                <small class="hint"
+                  >Dipakai untuk hitung sustainable growth rate di metode
+                  PBV</small
+                >
+              </div>
+              <!-- Valuasi historis -->
+              <div class="form-group">
+                <label
+                  >PER Rata-rata 5 Tahun (opsional)
+                  <span class="unit">(x)</span></label
+                >
+                <input type="number" id="perHistoris" placeholder="Contoh: 14" />
+                <small class="hint"
+                  >Rata-rata PER historis saham ini (Stockbit → Valuation →
+                  5Y Avg PE). Membuat Target PER lebih relevan dengan
+                  histori pasar, bukan hanya rumus kualitas.</small
+                >
+              </div>
+              <!-- DCF Parameters -->
+              <div class="form-group">
+                <label
+                  >Current Shares Outstanding
+                  <span class="unit">(juta lembar)</span></label
+                >
+                <input type="number" id="sharesOut" placeholder="Contoh: 1000" />
+              </div>
+              <div class="form-group">
+                <label>
+                  Discount Rate / Cost of Equity
+                  <span class="unit">(%)</span>
+                </label>
+
+                <input
+                  type="number"
+                  id="discountRate"
+                  placeholder="Default 12%"
+                />
+
+                <small class="hint">
+                  Kosongkan jika menggunakan default 12%. Dipakai sebagai
+                  discount rate DCF dan Ke pada Justified PBV.
+                </small>
+              </div>
+              <div class="form-group">
+                <label>
+                  Terminal Growth Rate
+
+                  <span class="unit">(%)</span>
+                </label>
+
+                <input
+                  type="number"
+                  id="terminalGrowth"
+                  placeholder="Default 3%"
+                />
+
+                <small class="hint"> Kosongkan jika menggunakan default 3%. </small>
+              </div>
+            </div>
+
+            <button class="btn-calc" onclick="calculate()">
+              <span>🔍</span> Hitung Harga Wajar Sekarang
+            </button>
+            <button class="btn-reset" onclick="resetForm()">↺ Reset Form</button>
           </div>
         </div>
 
-        <!-- METHOD BREAKDOWN -->
+        <!-- PANDUAN / GLOSSARY (statis, selalu tampil) -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">📘</div>
+            <div>
+              <h2>Panduan: Apa Arti Setiap Angka?</h2>
+              <p>Penjelasan singkat setiap metode dan metrik di bawah</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <dl class="glossary">
+              <div class="glossary-item">
+                <dt>Final Fair Value</dt>
+                <dd>
+                  Harga wajar akhir hasil rata-rata tertimbang (weighted
+                  average) dari 5 metode: DCF 30%, PER 25%, PBV 20%, Graham
+                  15%, PEG 10%. Tidak ada satu metode yang mendominasi, jadi
+                  hasilnya lebih seimbang antar sudut pandang (arus kas,
+                  earning, aset, dan growth).
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Discount</dt>
+                <dd>
+                  Seberapa "murah" harga saat ini dibanding fair value.
+                  Rumus: (Fair Value − Harga) ÷ Fair Value. Semakin besar
+                  angka positifnya, semakin murah sahamnya dari sisi valuasi.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Upside Potential</dt>
+                <dd>
+                  Potensi kenaikan harga jika saham mencapai fair value.
+                  Rumus: (Fair Value − Harga) ÷ Harga saat ini.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Margin of Safety (MOS)</dt>
+                <dd>
+                  Harga ideal untuk entry menurut prinsip Benjamin Graham:
+                  Fair Value dikurangi buffer risiko 30%, untuk mengantisipasi
+                  kesalahan estimasi/proyeksi.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Target PER</dt>
+                <dd>
+                  Rasio P/E yang dianggap wajar untuk saham ini, dihitung dari
+                  kombinasi ROE, growth, net margin — dan jika diisi, dirata-rata
+                  50:50 dengan PER historis 5 tahun saham tersebut. Fair Value
+                  PER = EPS × Target PER.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Target PBV (Justified P/BV)</dt>
+                <dd>
+                  Menggunakan rumus standar valuasi: (ROE − g) ÷ (Ke − g), di
+                  mana g = sustainable growth (ROE × retention ratio) dan Ke =
+                  cost of equity/discount rate. Jadi PBV wajar 4,0x artinya:
+                  berdasarkan profitabilitas (ROE) dan growth perusahaan
+                  dibanding cost of equity-nya, pasar secara wajar bisa
+                  menghargai ekuitas perusahaan 4 kali lipat dari nilai buku
+                  per sahamnya — bukan angka sembarang, tapi hasil model
+                  Gordon Growth pada nilai buku.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>DCF (Discounted Cash Flow)</dt>
+                <dd>
+                  Memproyeksikan Free Cash Flow 5 tahun ke depan lalu
+                  didiskon ke nilai sekarang memakai discount rate, ditambah
+                  nilai terminal (Terminal Value). Paling mendekati "nilai
+                  intrinsik" tapi paling sensitif terhadap asumsi growth &amp;
+                  discount rate.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Graham Number</dt>
+                <dd>
+                  √(22.5 × EPS × BVPS) — formula klasik Benjamin Graham yang
+                  membatasi P/E ≤ 15 dan P/BV ≤ 1.5 sekaligus. Cenderung
+                  konservatif dan tidak bergantung pada asumsi growth, cocok
+                  sebagai "batas bawah" kewajaran harga.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>PEG Ratio</dt>
+                <dd>
+                  Menilai wajar tidaknya PER dibanding growth: PEG = PER ÷
+                  Growth. Fair value dihitung dengan asumsi PEG = 1, artinya
+                  Target PER = growth (%) itu sendiri. Cocok untuk saham
+                  growth, kurang cocok untuk saham growth rendah/stagnan.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Fundamental Score</dt>
+                <dd>
+                  Skor 0–100 dari 10 parameter kesehatan bisnis (ROE, ROA,
+                  DER, Current Ratio, growth, FCF, margin, dividen). Menilai
+                  kualitas bisnis, terpisah dari murah/mahalnya harga.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Valuation Score</dt>
+                <dd>
+                  Skor 0–100 dari 3 komponen: Discount (40 poin), Upside (30
+                  poin), dan posisi harga terhadap Margin of Safety (30
+                  poin). Menilai murah/mahalnya harga saat ini.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Investment Score</dt>
+                <dd>
+                  Gabungan akhir: 60% Fundamental Score + 40% Valuation
+                  Score. Bisnis bagus lebih diprioritaskan daripada sekadar
+                  murah, karena bisnis buruk yang murah bisa tetap
+                  "value trap".
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="results">
+          <!-- RECOMMENDATION BANNER -->
+          <div id="recoBanner" class="reco-banner">
+            <div class="reco-score" id="recoScore">—</div>
+            <div class="reco-label" id="recoLabel">—</div>
+            <div class="reco-sub" id="recoSub">—</div>
+          </div>
+
+          <!-- FAIR VALUE SUMMARY -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-icon">💰</div>
+              <div>
+                <h2>Ringkasan Valuasi</h2>
+                <p id="summaryEmiten">—</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="metric-grid" id="summaryMetrics"></div>
+            </div>
+          </div>
+
+          <!-- METHOD BREAKDOWN -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-icon">📊</div>
+              <div>
+                <h2>Breakdown 5 Metode Valuasi</h2>
+                <p>
+                  Detail kalkulasi setiap metode dan kontribusinya ke Final
+                  Fair Value
+                </p>
+              </div>
+            </div>
+            <div class="card-body" style="padding: 0; overflow-x: auto">
+              <table class="method-table">
+                <thead>
+                  <tr>
+                    <th>Metode</th>
+                    <th>Fair Value</th>
+                    <th>Bobot</th>
+                    <th>Kontribusi</th>
+                    <th>vs Harga Saat Ini</th>
+                  </tr>
+                </thead>
+                <tbody id="methodTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- SCORES -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-icon">🏆</div>
+              <div>
+                <h2>Score Analysis</h2>
+                <p>Skor fundamental, valuasi, dan gabungan (Investment Score)</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="scoreDisplay"></div>
+            </div>
+          </div>
+
+          <!-- FUNDAMENTAL BREAKDOWN -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-icon">🔬</div>
+              <div>
+                <h2>Detail Fundamental Score</h2>
+                <p>Penilaian 10 parameter fundamental</p>
+              </div>
+            </div>
+            <div class="card-body" style="padding: 0; overflow-x: auto">
+              <table class="fund-table">
+                <thead>
+                  <tr>
+                    <th>Parameter</th>
+                    <th>Nilai Input</th>
+                    <th>Threshold</th>
+                    <th>Max Poin</th>
+                    <th>Poin Dapat</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="fundTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="disclaimer">
+            ⚠️ <strong>Disclaimer:</strong> Hasil kalkulasi ini bersifat
+            edukatif dan tidak merupakan saran investasi. Harga wajar
+            dihitung berdasarkan data dan asumsi yang dimasukkan pengguna.
+            Selalu lakukan riset mandiri dan konsultasi dengan penasihat
+            keuangan profesional sebelum mengambil keputusan investasi.
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           TAB 2 — UNTUNG / RUGI
+           ══════════════════════════════════════════ -->
+      <div class="tab-panel" id="tab-pl">
         <div class="card">
           <div class="card-header">
             <div class="card-header-icon">📊</div>
             <div>
-              <h2>Breakdown 5 Metode Valuasi</h2>
+              <h2>Kalkulator Untung / Rugi</h2>
               <p>
-                Detail kalkulasi setiap metode dan kontribusinya ke Final Fair
-                Value
+                Hitung estimasi profit/loss posisi sahammu berdasarkan harga
+                jual/prediksi
               </p>
             </div>
           </div>
-          <div class="card-body" style="padding: 0; overflow-x: auto">
-            <table class="method-table">
-              <thead>
-                <tr>
-                  <th>Metode</th>
-                  <th>Fair Value</th>
-                  <th>Bobot</th>
-                  <th>Kontribusi</th>
-                  <th>vs Harga Saat Ini</th>
-                </tr>
-              </thead>
-              <tbody id="methodTableBody"></tbody>
-            </table>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Harga Beli / Average <span class="unit">(Rp per lembar)</span></label>
+                <input type="number" id="plHargaBeli" placeholder="Contoh: 2000" />
+              </div>
+              <div class="form-group">
+                <label>Jumlah Lot Dimiliki <span class="unit">(1 lot = 100 lembar)</span></label>
+                <input type="number" id="plLot" placeholder="Contoh: 10" />
+              </div>
+              <div class="form-group">
+                <label>Harga Jual / Prediksi <span class="unit">(Rp per lembar)</span></label>
+                <input type="number" id="plHargaJual" placeholder="Contoh: 2300" />
+              </div>
+              <div class="form-group">
+                <label>Fee Beli <span class="unit">(%, opsional)</span></label>
+                <input type="number" id="plFeeBeli" placeholder="Default 0.15%" />
+                <small class="hint">Kosongkan untuk default 0.15%</small>
+              </div>
+              <div class="form-group">
+                <label>Fee Jual <span class="unit">(%, opsional)</span></label>
+                <input type="number" id="plFeeJual" placeholder="Default 0.25%" />
+                <small class="hint">Kosongkan untuk default 0.25% (termasuk PPh final 0.1%)</small>
+              </div>
+            </div>
+            <button class="btn-calc" onclick="calculatePL()">
+              <span>🧮</span> Hitung Untung / Rugi
+            </button>
+            <button class="btn-reset" onclick="resetPL()">↺ Reset Form</button>
           </div>
         </div>
 
-        <!-- SCORES -->
+        <div id="plResults" style="display: none">
+          <div class="pl-banner" id="plBanner">
+            <div class="pl-pct" id="plPct">—</div>
+            <div class="pl-label" id="plLabel">—</div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-icon">🧾</div>
+              <div>
+                <h2>Detail Perhitungan</h2>
+                <p>Termasuk estimasi biaya transaksi (fee broker + pajak)</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="metric-grid" id="plMetrics"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           TAB 3 — HITUNG AVERAGE
+           ══════════════════════════════════════════ -->
+      <div class="tab-panel" id="tab-avg">
         <div class="card">
           <div class="card-header">
-            <div class="card-header-icon">🏆</div>
+            <div class="card-header-icon">🔄</div>
             <div>
-              <h2>Score Analysis</h2>
-              <p>Skor fundamental, valuasi, dan gabungan (Investment Score)</p>
+              <h2>Kalkulator Average (Harga Rata-rata)</h2>
+              <p>
+                Hitung harga average baru saat menambah (average down/up)
+                posisi saham
+              </p>
             </div>
           </div>
           <div class="card-body">
-            <div id="scoreDisplay"></div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Lot Dimiliki Saat Ini</label>
+                <input type="number" id="avgLotLama" placeholder="Contoh: 20" />
+              </div>
+              <div class="form-group">
+                <label>Harga Average Saat Ini <span class="unit">(Rp)</span></label>
+                <input type="number" id="avgHargaLama" placeholder="Contoh: 200" />
+              </div>
+              <div class="form-group">
+                <label>Lot Tambahan yang Dibeli</label>
+                <input type="number" id="avgLotBaru" placeholder="Contoh: 10" />
+              </div>
+              <div class="form-group">
+                <label>Harga Beli Tambahan <span class="unit">(Rp)</span></label>
+                <input type="number" id="avgHargaBaru" placeholder="Contoh: 190" />
+              </div>
+            </div>
+            <button class="btn-calc" onclick="calculateAverage()">
+              <span>🔄</span> Hitung Average Baru
+            </button>
+            <button class="btn-reset" onclick="resetAverage()">↺ Reset Form</button>
           </div>
         </div>
 
-        <!-- FUNDAMENTAL BREAKDOWN -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-header-icon">🔬</div>
-            <div>
-              <h2>Detail Fundamental Score</h2>
-              <p>Penilaian 12 parameter fundamental</p>
+        <div id="avgResults" style="display: none">
+          <div class="reco-banner reco-bagus" id="avgBanner">
+            <div class="reco-score" id="avgScore">—</div>
+            <div class="reco-label">Harga Average Baru</div>
+            <div class="reco-sub" id="avgSub">—</div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-icon">🧾</div>
+              <div>
+                <h2>Detail Perhitungan</h2>
+                <p>Total lot, total modal, dan perubahan average</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="metric-grid" id="avgMetrics"></div>
             </div>
           </div>
-          <div class="card-body" style="padding: 0; overflow-x: auto">
-            <table class="fund-table">
-              <thead>
-                <tr>
-                  <th>Parameter</th>
-                  <th>Nilai Input</th>
-                  <th>Threshold</th>
-                  <th>Max Poin</th>
-                  <th>Poin Dapat</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="fundTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="disclaimer">
-          ⚠️ <strong>Disclaimer:</strong> Hasil kalkulasi ini bersifat edukatif
-          dan tidak merupakan saran investasi. Harga wajar dihitung berdasarkan
-          data yang dimasukkan pengguna. Selalu lakukan riset mandiri dan
-          konsultasi dengan penasihat keuangan profesional sebelum mengambil
-          keputusan investasi.
         </div>
       </div>
     </main>
 
     <script>
+      /* ══════════════════════════════════════════
+         HELPERS UMUM
+         ══════════════════════════════════════════ */
       function v(id) {
         return parseFloat(document.getElementById(id).value) || 0;
       }
@@ -886,13 +1337,39 @@
         return fmt(n, 1) + "%";
       }
 
+      function clamp(n, min, max) {
+        return Math.min(Math.max(n, min), max);
+      }
+
+      /* ══════════════════════════════════════════
+         TAB SWITCHER
+         ══════════════════════════════════════════ */
+      function showTab(name) {
+        ["fv", "pl", "avg"].forEach((t) => {
+          document
+            .getElementById("tab-" + t)
+            .classList.toggle("active", t === name);
+          document
+            .getElementById("tabBtn-" + t)
+            .classList.toggle("active", t === name);
+        });
+      }
+
+      /* ══════════════════════════════════════════
+         TAB 1 — FAIR VALUE
+         ══════════════════════════════════════════ */
       function resetForm() {
         document
-          .querySelectorAll('input[type="number"], input[type="text"]')
+          .querySelectorAll('#tab-fv input[type="number"], #tab-fv input[type="text"]')
           .forEach((el) => (el.value = ""));
         document.getElementById("results").style.display = "none";
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
+
+      // Bobot metode — sumbernya SATU tempat ini saja, dipakai untuk
+      // fvFinal maupun tabel breakdown, supaya tidak ada lagi mismatch
+      // antara bobot yang ditampilkan dan bobot yang benar-benar dihitung.
+      const WEIGHTS = { dcf: 0.3, per: 0.25, pbv: 0.2, graham: 0.15, peg: 0.1 };
 
       function calculate() {
         // Read inputs
@@ -906,60 +1383,70 @@
         const opm = v("opm");
         const revGrowth = v("revGrowth");
         const niGrowth = v("niGrowth");
-        const growth = (revGrowth + niGrowth) / 2;
+        const growthShort = (revGrowth + niGrowth) / 2;
+        const growthLong = v("growthAvgLong");
+        // Prioritaskan growth rata-rata 3-5 tahun (lebih stabil) jika diisi,
+        // fallback ke rata-rata growth quarter YoY.
+        const growth = growthLong > 0 ? growthLong : growthShort;
         const der = v("der");
         const cr = v("cr");
         const fcf = v("fcf");
         const ocf = v("ocf");
         const divYield = v("divYield");
         const dpr = v("dpr");
+        const perHistoris = v("perHistoris");
         const sharesOut = v("sharesOut");
         const discRate = v("discountRate") / 100 || 0.12;
         const terminalInput = v("terminalGrowth");
         const termGrowth = terminalInput > 0 ? terminalInput / 100 : 0.03;
-        const g = growth;
 
         // ── 1. PER Fair Value ──
-        const qualityPER = roe * 0.45 + growth * 0.35 + npm * 0.2;
-
-        let targetPER;
-
-        if (qualityPER >= 40) targetPER = 18;
-        else if (qualityPER >= 30) targetPER = 15;
-        else if (qualityPER >= 20) targetPER = 12;
-        else if (qualityPER >= 10) targetPER = 10;
-        else targetPER = 8;
-
+        // Target PER dihitung kontinu (bukan tangga/step) dari kualitas
+        // ROE + growth + margin, lalu dirata-rata dengan PER historis 5
+        // tahun (jika diisi) agar tidak lepas dari histori valuasi pasar.
+        const qualityPER = roe * 0.4 + growth * 0.35 + npm * 0.25;
+        let targetPER = clamp(8 + qualityPER * 0.32, 6, 30);
+        if (perHistoris > 0) {
+          targetPER = targetPER * 0.5 + perHistoris * 0.5;
+        }
         const fvPER = eps * targetPER;
 
-        // ── 2. PBV Fair Value ──
-        const qualityPBV =
-          roe * 0.6 + growth * 0.2 + Math.max(0, 2 - der) * 10 * 0.2;
-
+        // ── 2. PBV Fair Value — Justified P/BV Model ──
+        // Rumus baku: Justified P/BV = (ROE - g) / (Ke - g)
+        // g = sustainable growth rate = ROE x retention ratio (1 - payout ratio)
+        // Ke = cost of equity, didekati dari Discount Rate input.
+        const gSustainable = (roe / 100) * (1 - dpr / 100);
+        const ke = discRate;
         let targetPBV;
-
-        if (qualityPBV >= 25) targetPBV = 4.0;
-        else if (qualityPBV >= 20) targetPBV = 3.0;
-        else if (qualityPBV >= 15) targetPBV = 2.5;
-        else if (qualityPBV >= 10) targetPBV = 1.8;
-        else targetPBV = 1.2;
-
+        if (ke - gSustainable > 0.005) {
+          targetPBV = (roe / 100 - gSustainable) / (ke - gSustainable);
+        } else {
+          // Ke <= g: growth melebihi cost of equity, formula Gordon Growth
+          // tidak valid (biasanya perusahaan growth sangat tinggi).
+          // Fallback ke nilai netral agar tidak menghasilkan angka ekstrem.
+          targetPBV = 3;
+        }
+        targetPBV = clamp(targetPBV, 0.5, 6);
         const fvPBV = bvps * targetPBV;
 
-        // ── 3. PEG Fair Value ──
-        const normalizedGrowth = Math.min(Math.max(g, 5), 30);
-        // Target PER berdasarkan PEG = 1
-        const pegPER = normalizedGrowth;
+        // ── 3. Graham Number ──
+        // Formula klasik Benjamin Graham: sqrt(22.5 x EPS x BVPS)
+        // Tidak bergantung pada asumsi growth, sehingga lebih objektif
+        // dan berfungsi sebagai batas bawah kewajaran harga.
+        let fvGraham = 0;
+        if (eps > 0 && bvps > 0) {
+          fvGraham = Math.sqrt(22.5 * eps * bvps);
+        } else {
+          const grahamGrowth = Math.min(growth, 20);
+          fvGraham = eps * (8.5 + 2 * grahamGrowth);
+        }
 
-        const fvPEG = eps * pegPER;
-
-        // ── 4. Graham Formula ──
-        const grahamGrowth = Math.min(g, 20);
-
-        const fvGraham = eps * (8.5 + 2 * grahamGrowth);
+        // ── 4. PEG Fair Value (PEG = 1) ──
+        const normalizedGrowth = clamp(growth, 5, 30);
+        const fvPEG = eps * normalizedGrowth;
 
         // ── 5. DCF ──
-        const dcfGrowth = Math.min(Math.max(growth, 5), 15);
+        const dcfGrowth = clamp(growth, 5, 15);
 
         let totalPV = 0;
         let fcfCurr = fcf;
@@ -976,13 +1463,13 @@
         const intrinsicVal = totalPV + pvTV;
         const fvDCF = sharesOut > 0 ? intrinsicVal / sharesOut : 0;
 
-        // ── Final Fair Value ──
+        // ── Final Fair Value (bobot konsisten dari WEIGHTS) ──
         const fvFinal =
-          fvDCF*0.30+
-          fvPER*0.30+
-          fvPBV*0.20+
-          fvPEG*0.10+
-          fvGraham*0.10;
+          fvDCF * WEIGHTS.dcf +
+          fvPER * WEIGHTS.per +
+          fvPBV * WEIGHTS.pbv +
+          fvGraham * WEIGHTS.graham +
+          fvPEG * WEIGHTS.peg;
 
         // ── Valuation Metrics ──
         const discount = harga > 0 ? ((fvFinal - harga) / fvFinal) * 100 : 0;
@@ -1195,30 +1682,41 @@
           {
             label: "Final Fair Value",
             val: fmtRp(fvFinal),
-            sub: "Weighted Average",
+            sub: "Rata-rata tertimbang 5 metode (DCF 30% • PER 25% • PBV 20% • Graham 15% • PEG 10%)",
             hi: true,
           },
-          { label: "Harga Saat Ini", val: fmtRp(harga), sub: "Market Price" },
-          { label: "Discount", val: pct(discount), sub: "dari Fair Value" },
+          {
+            label: "Harga Saat Ini",
+            val: fmtRp(harga),
+            sub: "Harga pasar saat ini (input kamu)",
+          },
+          {
+            label: "Discount",
+            val: pct(discount),
+            sub: "Seberapa murah harga vs fair value: (FV−Harga)/FV",
+          },
           {
             label: "Upside Potential",
             val: pct(upside),
-            sub: "dari Harga Saat Ini",
+            sub: "Potensi kenaikan jika harga capai fair value",
           },
           {
             label: "Margin of Safety",
             val: fmtRp(mos),
-            sub: "Buy Below (–30%)",
+            sub: "Harga ideal entry = Fair Value − buffer risiko 30%",
           },
           {
             label: "Target PER",
             val: `${fmt(targetPER, 1)}x`,
-            sub: "ROE + Growth + Margin",
+            sub:
+              perHistoris > 0
+                ? "50% formula (ROE+Growth+Margin) + 50% PER historis 5th"
+                : "Dari kualitas ROE, growth & net margin",
           },
           {
             label: "Target PBV",
             val: `${fmt(targetPBV, 1)}x`,
-            sub: "ROE + Growth + DER",
+            sub: "Justified P/BV = (ROE−g) ÷ (Ke−g), g = ROE × retention ratio",
           },
         ];
         document.getElementById("summaryMetrics").innerHTML = metrics
@@ -1234,11 +1732,36 @@
 
         // Method Table
         const methods = [
-          { name: "DCF", fv: fvDCF, w: 0.4, wlabel: "40%" },
-          { name: "PER", fv: fvPER, w: 0.25, wlabel: "25%" },
-          { name: "PBV", fv: fvPBV, w: 0.15, wlabel: "15%" },
-          { name: "PEG", fv: fvPEG, w: 0.1, wlabel: "10%" },
-          { name: "Graham Formula", fv: fvGraham, w: 0.1, wlabel: "10%" },
+          {
+            name: "DCF",
+            fv: fvDCF,
+            w: WEIGHTS.dcf,
+            wlabel: WEIGHTS.dcf * 100 + "%",
+          },
+          {
+            name: "PER",
+            fv: fvPER,
+            w: WEIGHTS.per,
+            wlabel: WEIGHTS.per * 100 + "%",
+          },
+          {
+            name: "PBV (Justified)",
+            fv: fvPBV,
+            w: WEIGHTS.pbv,
+            wlabel: WEIGHTS.pbv * 100 + "%",
+          },
+          {
+            name: "Graham Number",
+            fv: fvGraham,
+            w: WEIGHTS.graham,
+            wlabel: WEIGHTS.graham * 100 + "%",
+          },
+          {
+            name: "PEG (PEG=1)",
+            fv: fvPEG,
+            w: WEIGHTS.peg,
+            wlabel: WEIGHTS.peg * 100 + "%",
+          },
         ];
         document.getElementById("methodTableBody").innerHTML =
           methods
@@ -1330,13 +1853,135 @@
           `<tr style="background:var(--green-50);">
       <td colspan="3"><strong>Total Fundamental Score</strong></td>
       <td style="text-align:center"><strong>100</strong></td>
-      <td style="text-align:center;font-weight:800;color:var(--green-700);font-size:0.95rem">${fundScore}</td>
+      <td style="text-align:center;font-weight:800;color:var(--green-700);font-size:0.95rem">${fmt(fundScore, 0)}</td>
       <td></td>
     </tr>`;
 
         // Scroll to results
         document
           .getElementById("results")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      /* ══════════════════════════════════════════
+         TAB 2 — KALKULATOR UNTUNG / RUGI
+         ══════════════════════════════════════════ */
+      function resetPL() {
+        ["plHargaBeli", "plLot", "plHargaJual", "plFeeBeli", "plFeeJual"].forEach(
+          (id) => (document.getElementById(id).value = ""),
+        );
+        document.getElementById("plResults").style.display = "none";
+      }
+
+      function calculatePL() {
+        const hargaBeli = v("plHargaBeli");
+        const lot = v("plLot");
+        const hargaJual = v("plHargaJual");
+        const feeBeliPct = v("plFeeBeli") > 0 ? v("plFeeBeli") : 0.15;
+        const feeJualPct = v("plFeeJual") > 0 ? v("plFeeJual") : 0.25;
+
+        const lembar = lot * 100;
+        const modalKotor = hargaBeli * lembar;
+        const biayaBeli = modalKotor * (feeBeliPct / 100);
+        const modalBersih = modalKotor + biayaBeli;
+
+        const nilaiJualKotor = hargaJual * lembar;
+        const biayaJual = nilaiJualKotor * (feeJualPct / 100);
+        const nilaiJualBersih = nilaiJualKotor - biayaJual;
+
+        const untungRugiRp = nilaiJualBersih - modalBersih;
+        const untungRugiPct =
+          modalBersih > 0 ? (untungRugiRp / modalBersih) * 100 : 0;
+
+        document.getElementById("plResults").style.display = "block";
+        const banner = document.getElementById("plBanner");
+        const isUntung = untungRugiRp >= 0;
+        banner.className = "pl-banner " + (isUntung ? "pl-untung" : "pl-rugi");
+        document.getElementById("plPct").textContent =
+          (isUntung ? "+" : "") + pct(untungRugiPct);
+        document.getElementById("plLabel").textContent = isUntung
+          ? `🚀 Untung ${fmtRp(Math.abs(untungRugiRp))}`
+          : `📉 Rugi ${fmtRp(Math.abs(untungRugiRp))}`;
+
+        const metrics = [
+          { label: "Total Lembar Saham", val: fmt(lembar) + " lembar" },
+          { label: "Modal Awal (Bersih)", val: fmtRp(modalBersih), sub: `Termasuk fee beli ${fmt(feeBeliPct, 2)}%` },
+          { label: "Nilai Jual (Bersih)", val: fmtRp(nilaiJualBersih), sub: `Setelah fee jual ${fmt(feeJualPct, 2)}%` },
+          {
+            label: isUntung ? "Total Untung" : "Total Rugi",
+            val: fmtRp(Math.abs(untungRugiRp)),
+            sub: isUntung ? "Selisih nilai jual − modal" : "Selisih modal − nilai jual",
+            hi: true,
+          },
+          { label: "Persentase", val: (isUntung ? "+" : "") + pct(untungRugiPct), sub: "Terhadap modal bersih" },
+          { label: "Biaya Transaksi Total", val: fmtRp(biayaBeli + biayaJual), sub: "Fee beli + fee jual" },
+        ];
+        document.getElementById("plMetrics").innerHTML = metrics
+          .map(
+            (m) => `<div class="metric-card${m.hi ? " highlight" : ""}">
+        <div class="metric-label">${m.label}</div>
+        <div class="metric-val">${m.val}</div>
+        <div class="metric-sub">${m.sub || ""}</div>
+      </div>`,
+          )
+          .join("");
+
+        document
+          .getElementById("plResults")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      /* ══════════════════════════════════════════
+         TAB 3 — KALKULATOR AVERAGE
+         ══════════════════════════════════════════ */
+      function resetAverage() {
+        ["avgLotLama", "avgHargaLama", "avgLotBaru", "avgHargaBaru"].forEach(
+          (id) => (document.getElementById(id).value = ""),
+        );
+        document.getElementById("avgResults").style.display = "none";
+      }
+
+      function calculateAverage() {
+        const lotLama = v("avgLotLama");
+        const hargaLama = v("avgHargaLama");
+        const lotBaru = v("avgLotBaru");
+        const hargaBaru = v("avgHargaBaru");
+
+        const modalLama = lotLama * 100 * hargaLama;
+        const modalBaru = lotBaru * 100 * hargaBaru;
+        const totalLot = lotLama + lotBaru;
+        const totalModal = modalLama + modalBaru;
+        const avgBaru = totalLot > 0 ? totalModal / (totalLot * 100) : 0;
+        const perubahan = hargaLama > 0 ? ((avgBaru - hargaLama) / hargaLama) * 100 : 0;
+
+        document.getElementById("avgResults").style.display = "block";
+        document.getElementById("avgScore").textContent = fmtRp(avgBaru);
+        document.getElementById("avgSub").textContent =
+          `Dari ${fmt(lotLama)} lot @${fmtRp(hargaLama)} + ${fmt(lotBaru)} lot @${fmtRp(hargaBaru)}`;
+
+        const metrics = [
+          { label: "Total Lot Setelah Beli", val: fmt(totalLot) + " lot", sub: `${fmt(lotLama)} lot lama + ${fmt(lotBaru)} lot baru` },
+          { label: "Total Modal", val: fmtRp(totalModal), sub: "Modal lama + modal tambahan" },
+          { label: "Harga Average Lama", val: fmtRp(hargaLama), sub: "Sebelum penambahan" },
+          { label: "Harga Average Baru", val: fmtRp(avgBaru), sub: "Setelah penambahan", hi: true },
+          {
+            label: perubahan <= 0 ? "Average Turun" : "Average Naik",
+            val: (perubahan <= 0 ? "" : "+") + pct(perubahan),
+            sub: "Perubahan average lama → baru",
+          },
+        ];
+        document.getElementById("avgMetrics").innerHTML = metrics
+          .map(
+            (m) => `<div class="metric-card${m.hi ? " highlight" : ""}">
+        <div class="metric-label">${m.label}</div>
+        <div class="metric-val">${m.val}</div>
+        <div class="metric-sub">${m.sub || ""}</div>
+      </div>`,
+          )
+          .join("");
+
+        document
+          .getElementById("avgResults")
           .scrollIntoView({ behavior: "smooth", block: "start" });
       }
     </script>
