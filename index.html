@@ -3,25 +3,706 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StockFaiz — Analisis &amp; Valuasi Saham Otomatis</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+    <title>StockFaiz — Kalkulator Harga Wajar Saham</title>
+    <style>
+      :root {
+        --green-50: #f0fdf4;
+        --green-100: #dcfce7;
+        --green-200: #bbf7d0;
+        --green-300: #86efac;
+        --green-400: #4ade80;
+        --green-500: #22c55e;
+        --green-600: #16a34a;
+        --green-700: #15803d;
+        --green-800: #166534;
+        --green-900: #14532d;
+        --white: #ffffff;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-700: #374151;
+        --gray-900: #111827;
+        --radius: 12px;
+        --radius-sm: 8px;
+        --shadow: 0 4px 24px rgba(34, 197, 94, 0.1);
+        --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.07);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          "Segoe UI",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: var(--green-50);
+        color: var(--gray-900);
+        min-height: 100vh;
+      }
+
+      /* ─── HEADER ─── */
+      header {
+        background: linear-gradient(
+          135deg,
+          var(--green-700) 0%,
+          var(--green-500) 100%
+        );
+        color: white;
+        padding: 0 24px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 16px rgba(22, 163, 74, 0.25);
+      }
+      .header-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+      .logo-icon {
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+      }
+      .header-badge {
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        padding: 4px 14px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      /* ─── HERO ─── */
+      .hero {
+        background: linear-gradient(
+          135deg,
+          var(--green-700) 0%,
+          var(--green-500) 100%
+        );
+        color: white;
+        padding: 48px 24px 60px;
+        text-align: center;
+      }
+      .hero h1 {
+        font-size: clamp(1.6rem, 4vw, 2.6rem);
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        margin-bottom: 12px;
+      }
+      .hero p {
+        font-size: 1.05rem;
+        opacity: 0.88;
+        max-width: 560px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+      .method-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 24px;
+      }
+      .pill {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: white;
+        border-radius: 20px;
+        padding: 5px 14px;
+        font-size: 0.78rem;
+        font-weight: 500;
+      }
+
+      /* ─── MAIN LAYOUT ─── */
+      main {
+        max-width: 1100px;
+        margin: -20px auto 60px;
+        padding: 0 16px;
+      }
+
+      /* ─── CARD ─── */
+      .card {
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-card);
+        border: 1px solid var(--green-100);
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+      .card-header {
+        padding: 18px 24px 16px;
+        border-bottom: 1px solid var(--green-100);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-header-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--green-100);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+      }
+      .card-header h2 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--green-800);
+      }
+      .card-header p {
+        font-size: 0.78rem;
+        color: var(--gray-500);
+        margin-top: 1px;
+      }
+      .card-body {
+        padding: 20px 24px 24px;
+      }
+
+      /* ─── FORM GRID ─── */
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 16px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 6px;
+        letter-spacing: 0.01em;
+      }
+      .form-group label span.unit {
+        font-weight: 400;
+        color: var(--gray-400);
+        margin-left: 4px;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1.5px solid var(--gray-200);
+        border-radius: var(--radius-sm);
+        font-size: 0.92rem;
+        color: var(--gray-900);
+        background: var(--gray-50);
+        transition:
+          border-color 0.18s,
+          box-shadow 0.18s;
+        outline: none;
+      }
+      .form-group input:focus {
+        border-color: var(--green-400);
+        box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.18);
+        background: white;
+      }
+      .form-group input::placeholder {
+        color: var(--gray-400);
+      }
+
+      .form-full {
+        grid-column: 1 / -1;
+      }
+
+      /* ─── BUTTON ─── */
+      .btn-calc {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, var(--green-600), var(--green-500));
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+        margin-top: 8px;
+        letter-spacing: 0.01em;
+      }
+      .btn-calc:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(34, 197, 94, 0.35);
+      }
+      .btn-calc:active {
+        transform: translateY(0);
+      }
+      .btn-reset {
+        width: 100%;
+        padding: 11px;
+        background: white;
+        color: var(--gray-500);
+        border: 1.5px solid var(--gray-200);
+        border-radius: var(--radius-sm);
+        font-size: 0.88rem;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 10px;
+        transition:
+          border-color 0.15s,
+          color 0.15s;
+      }
+      .btn-reset:hover {
+        border-color: var(--green-400);
+        color: var(--green-700);
+      }
+
+      /* ─── RESULTS (hidden by default) ─── */
+      #results {
+        display: none;
+      }
+
+      /* ─── RECOMMENDATION BANNER ─── */
+      .reco-banner {
+        padding: 24px;
+        border-radius: var(--radius);
+        margin-bottom: 20px;
+        text-align: center;
+        border: 2px solid;
+      }
+      .reco-banner .reco-score {
+        font-size: 3rem;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .reco-banner .reco-label {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-top: 8px;
+        letter-spacing: 0.02em;
+      }
+      .reco-banner .reco-sub {
+        font-size: 0.85rem;
+        margin-top: 4px;
+        opacity: 0.75;
+      }
+      .reco-sangat-bagus {
+        background: #f0fdf4;
+        border-color: #22c55e;
+        color: #15803d;
+      }
+      .reco-bagus {
+        background: #f0fdf4;
+        border-color: #4ade80;
+        color: #166534;
+      }
+      .reco-pantau {
+        background: #fefce8;
+        border-color: #facc15;
+        color: #a16207;
+      }
+      .reco-hati {
+        background: #fff7ed;
+        border-color: #fb923c;
+        color: #9a3412;
+      }
+      .reco-hindari {
+        background: #fff1f2;
+        border-color: #f87171;
+        color: #991b1b;
+      }
+      .reco-sangat-hindari {
+        background: #fef2f2;
+        border-color: #ef4444;
+        color: #7f1d1d;
+      }
+
+      /* ─── METRIC GRID ─── */
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+      }
+      .metric-card {
+        background: var(--green-50);
+        border: 1px solid var(--green-100);
+        border-radius: var(--radius-sm);
+        padding: 14px 16px;
+      }
+      .metric-card .metric-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .metric-card .metric-val {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--green-700);
+        margin-top: 4px;
+      }
+      .metric-card .metric-sub {
+        font-size: 0.73rem;
+        color: var(--gray-500);
+        margin-top: 2px;
+        line-height: 1.4;
+      }
+      .metric-card.highlight {
+        background: var(--green-600);
+        border-color: var(--green-700);
+      }
+      .metric-card.highlight .metric-label,
+      .metric-card.highlight .metric-val,
+      .metric-card.highlight .metric-sub {
+        color: white;
+      }
+
+      /* ─── METHOD TABLE ─── */
+      .method-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .method-table thead th {
+        padding: 10px 16px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--green-800);
+        background: var(--green-50);
+        text-align: left;
+      }
+      .method-table tbody td {
+        padding: 12px 16px;
+        border-top: 1px solid var(--green-100);
+        font-size: 0.88rem;
+        color: var(--gray-700);
+      }
+      .method-table tbody tr:hover {
+        background: var(--green-50);
+      }
+      .method-name {
+        font-weight: 700;
+        color: var(--gray-900);
+      }
+      .method-weight {
+        display: inline-block;
+        background: var(--green-100);
+        color: var(--green-800);
+        border-radius: 10px;
+        padding: 2px 8px;
+        font-size: 0.73rem;
+        font-weight: 700;
+      }
+
+      /* ─── SCORE BAR ─── */
+      .score-section {
+        margin-bottom: 16px;
+      }
+      .score-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 6px;
+      }
+      .score-name {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--gray-700);
+      }
+      .score-num {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--green-700);
+      }
+      .score-bar-bg {
+        height: 10px;
+        background: var(--gray-100);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .score-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--green-400), var(--green-600));
+        transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* ─── FUND TABLE ─── */
+      .fund-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .fund-table thead th {
+        padding: 9px 12px;
+        font-size: 0.73rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--green-800);
+        background: var(--green-50);
+        text-align: left;
+      }
+      .fund-table tbody td {
+        padding: 10px 12px;
+        border-top: 1px solid var(--green-100);
+        font-size: 0.82rem;
+        color: var(--gray-700);
+      }
+      .fund-table tbody tr:hover {
+        background: var(--green-50);
+      }
+      .status-pass {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #dcfce7;
+        color: #166534;
+        border-radius: 10px;
+        padding: 2px 8px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .status-fail {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #fee2e2;
+        color: #991b1b;
+        border-radius: 10px;
+        padding: 2px 8px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .status-partial {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #fef9c3;
+        color: #854d0e;
+        border-radius: 10px;
+        padding: 2px 8px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      /* ─── DISCLAIMER ─── */
+      .disclaimer {
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-sm);
+        padding: 14px 18px;
+        font-size: 0.77rem;
+        color: var(--gray-500);
+        line-height: 1.6;
+        margin-top: 20px;
+      }
+
+      /* ══════════════════════════════════════════
+         PENAMBAHAN CSS BARU (di luar yang sudah ada)
+         ══════════════════════════════════════════ */
+
+      /* Tab navigasi 3 fitur */
+      .tab-nav {
+        display: flex;
+        gap: 8px;
+        background: white;
+        border: 1px solid var(--green-100);
+        border-radius: var(--radius);
+        padding: 6px;
+        margin: 0 0 20px;
+        box-shadow: var(--shadow-card);
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        flex: 1;
+        min-width: 140px;
+        padding: 12px 10px;
+        border: none;
+        background: transparent;
+        color: var(--gray-500);
+        font-weight: 700;
+        font-size: 0.85rem;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .tab-btn:hover {
+        background: var(--green-50);
+        color: var(--green-700);
+      }
+      .tab-btn.active {
+        background: linear-gradient(135deg, var(--green-600), var(--green-500));
+        color: white;
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+      }
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+
+      /* Hint / tips kecil di bawah input */
+      .hint {
+        display: block;
+        font-size: 0.7rem;
+        color: var(--gray-400);
+        margin-top: 4px;
+        line-height: 1.4;
+      }
+
+      /* Kotak tips akurasi di atas form */
+      .tips-box {
+        background: var(--green-50);
+        border: 1px dashed var(--green-300);
+        border-radius: var(--radius-sm);
+        padding: 12px 16px;
+        font-size: 0.8rem;
+        color: var(--green-800);
+        line-height: 1.6;
+        margin-bottom: 18px;
+      }
+      .tips-box strong {
+        color: var(--green-700);
+      }
+
+      /* Panduan / glossary list */
+      .glossary {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 14px;
+      }
+      .glossary-item dt {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: var(--green-800);
+        margin-bottom: 3px;
+      }
+      .glossary-item dd {
+        font-size: 0.78rem;
+        color: var(--gray-500);
+        line-height: 1.55;
+      }
+
+      /* Hasil untung/rugi & average */
+      .pl-banner {
+        padding: 22px;
+        border-radius: var(--radius);
+        text-align: center;
+        border: 2px solid;
+        margin-bottom: 18px;
+      }
+      .pl-untung {
+        background: #f0fdf4;
+        border-color: #22c55e;
+        color: #15803d;
+      }
+      .pl-rugi {
+        background: #fef2f2;
+        border-color: #ef4444;
+        color: #7f1d1d;
+      }
+      .pl-banner .pl-pct {
+        font-size: 2.4rem;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .pl-banner .pl-label {
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin-top: 6px;
+      }
+
+      @media (max-width: 640px) {
+        .tab-nav {
+          flex-direction: column;
+        }
+        .tab-btn {
+          min-width: 0;
+        }
+      }
+
+      /* ─── RESPONSIVE (asli) ─── */
+      @media (max-width: 640px) {
+        .header-badge {
+          display: none;
+        }
+        .hero {
+          padding: 32px 16px 48px;
+        }
+        .card-body {
+          padding: 16px;
+        }
+        .card-header {
+          padding: 14px 16px;
+        }
+        .form-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .metric-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .method-table,
+        .fund-table {
+          font-size: 0.8rem;
+        }
+        .method-table thead th,
+        .fund-table thead th,
+        .method-table tbody td,
+        .fund-table tbody td {
+          padding: 9px 10px;
+        }
+      }
+      @media (max-width: 400px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .metric-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
   </head>
   <body>
     <header>
       <div class="header-inner">
-        <div class="logo"><div class="logo-icon">📈</div>StockFaiz</div>
-        <div class="header-badge">Analisis &amp; Valuasi Saham Otomatis</div>
+        <div class="logo">
+          <div class="logo-icon">📈</div>
+          StockFaiz
+        </div>
+        <div class="header-badge">Kalkulator Harga Wajar Saham</div>
       </div>
     </header>
 
     <div class="hero">
-      <h1>Analisis &amp; Valuasi Saham dari Laporan Keuangan</h1>
+      <h1>Temukan Harga Wajar Sahammu</h1>
       <p>
-        Cukup masukkan data mentah dari laporan keuangan resmi (Annual
-        Report/IDX) 3–5 tahun terakhir — seluruh rasio, pertumbuhan, skor
-        kesehatan bisnis, dan harga wajar dihitung otomatis oleh sistem.
-        Plus kalkulator untung/rugi dan rata-rata (average) harga saham.
+        Analisis valuasi komprehensif menggunakan 5 metode valuasi terbaik —
+        DCF, PER, PBV (Justified), Graham Number, dan PEG — plus kalkulator
+        untung/rugi dan rata-rata (average) harga saham.
       </p>
       <div class="method-pills">
         <span class="pill">📊 DCF 30%</span>
@@ -35,106 +716,368 @@
     <main>
       <!-- TAB NAV -->
       <div class="tab-nav">
-        <button class="tab-btn active" id="tabBtn-fv" onclick="showTab('fv')">💰 Analisis &amp; Harga Wajar</button>
-        <button class="tab-btn" id="tabBtn-pl" onclick="showTab('pl')">📊 Untung / Rugi</button>
-        <button class="tab-btn" id="tabBtn-avg" onclick="showTab('avg')">🔄 Hitung Average</button>
+        <button class="tab-btn active" id="tabBtn-fv" onclick="showTab('fv')">
+          💰 Harga Wajar Saham
+        </button>
+        <button class="tab-btn" id="tabBtn-pl" onclick="showTab('pl')">
+          📊 Untung / Rugi
+        </button>
+        <button class="tab-btn" id="tabBtn-avg" onclick="showTab('avg')">
+          🔄 Hitung Average
+        </button>
       </div>
 
       <!-- ══════════════════════════════════════════
-           TAB 1 — ANALISIS & HARGA WAJAR
+           TAB 1 — KALKULATOR HARGA WAJAR
            ══════════════════════════════════════════ -->
       <div class="tab-panel active" id="tab-fv">
-
-        <!-- A. DATA PASAR -->
+        <!-- INPUT SECTION -->
         <div class="card">
           <div class="card-header">
-            <div class="card-header-icon">🏷️</div>
+            <div class="card-header-icon">✏️</div>
             <div>
-              <h2>A. Data Pasar</h2>
-              <p>Input sekali saja — data terbaru</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="form-grid">
-              <div class="form-group form-full">
-                <label>Nama Emiten / Kode Saham</label>
-                <input type="text" id="emiten" placeholder="Contoh: BBCA, TLKM, ASII…" />
-              </div>
-              <div class="form-group">
-                <label>Harga Saham Saat Ini <span class="unit">(Rp)</span></label>
-                <input type="text" inputmode="decimal" class="fmt-number" id="hargaSaatIni" placeholder="Contoh: 9.500" oninput="formatNumberLive(event)" />
-              </div>
-              <div class="form-group">
-                <label>Jumlah Saham Beredar <span class="unit">(juta lembar)</span></label>
-                <input type="text" inputmode="decimal" class="fmt-number" id="sharesOut" placeholder="Contoh: 24.000" oninput="formatNumberLive(event)" />
-                <small class="hint">Total saham beredar terbaru (bukan per tahun)</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- B. DATA KEUANGAN TAHUNAN -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-header-icon">📑</div>
-            <div>
-              <h2>B. Data Laporan Keuangan (per Tahun)</h2>
-              <p>Minimal 3 tahun, disarankan hingga 5 tahun agar hasil lebih akurat</p>
+              <h2>Data Input Saham</h2>
+              <p>Masukkan data fundamental emiten yang ingin dianalisis</p>
             </div>
           </div>
           <div class="card-body">
             <div class="tips-box">
-              💡 <strong>Sumber data:</strong> ambil langsung dari Laporan Laba Rugi, Laporan
-              Posisi Keuangan (Neraca), dan Laporan Arus Kas di Annual Report / laporan keuangan
-              resmi perusahaan (IDX atau Stockbit → Financial Statement). Masukkan angka dalam
-              satuan yang sama untuk semua tahun (disarankan <strong>Rp juta</strong>). Semua
-              rasio, growth, dan skor akan dihitung otomatis dari data ini.
+              💡 <strong>Tips Akurasi:</strong> agar hasil tidak bias oleh satu
+              tahun yang tidak normal (misal ada laba/rugi luar biasa), isi
+              ROE, ROA, NPM, OPM, dan pertumbuhan idealnya dengan
+              <strong>rata-rata 3–5 tahun terakhir</strong>, bukan hanya angka
+              1 kuartal terakhir. Di Stockbit, buka
+              <strong>Keystats → pilih rentang "5Y" / "Annual"</strong>
+              lalu rata-ratakan manual, atau gunakan menu
+              <strong>Historical Financial</strong> untuk melihat tren 5
+              tahun. Field bertanda (opsional) akan membuat hasil jauh lebih
+              akurat jika diisi.
             </div>
 
-            <div class="fin-year-actions">
-              <button class="btn-sm" onclick="addYear()" id="btnAddYear">+ Tambah Tahun</button>
-              <button class="btn-sm danger" onclick="removeYear()" id="btnRemoveYear">− Hapus Tahun Terakhir</button>
-              <span class="fin-year-count" id="yearCountLabel">3 tahun data (minimal 3, maksimal 5)</span>
-            </div>
-
-            <div class="fin-input-wrap">
-              <table class="fin-table" id="finTable"></table>
-            </div>
-
-            <div class="form-grid" style="margin-top: 20px">
-              <div class="form-group">
-                <label>Discount Rate / Cost of Equity <span class="unit">(%)</span></label>
-                <input type="number" id="discountRate" placeholder="Default 12%" />
-                <small class="hint">Dipakai sebagai discount rate DCF dan Ke pada Target PBV</small>
+            <div class="form-grid">
+              <!-- Identitas -->
+              <div class="form-group form-full">
+                <label>Nama Emiten / Kode Saham</label>
+                <input
+                  type="text"
+                  id="emiten"
+                  placeholder="Contoh: BBCA, TLKM, ASII…"
+                />
               </div>
               <div class="form-group">
-                <label>Terminal Growth Rate <span class="unit">(%)</span></label>
-                <input type="number" id="terminalGrowth" placeholder="Default 3%" />
-                <small class="hint">Estimasi pertumbuhan jangka panjang setelah tahun ke-5</small>
+                <label>Harga Saham Saat Ini <span class="unit">(Rp)</span></label>
+                <input
+                  type="number"
+                  id="hargaSaatIni"
+                  placeholder="Contoh: 9500"
+                />
               </div>
               <div class="form-group">
-                <label>Margin of Safety Buffer <span class="unit">(%)</span></label>
-                <input type="number" id="mosBuffer" placeholder="Default 30%" />
-                <small class="hint">Buffer risiko ala Benjamin Graham untuk hitung harga beli ideal</small>
+                <label
+                  >Current EPS (TTM) | Per Share
+                  <span class="unit">(Rp)</span></label
+                >
+                <input type="number" id="eps" placeholder="Contoh: 500" />
+                <small class="hint">Earning Per Share 12 bulan terakhir (TTM)</small>
+              </div>
+              <div class="form-group">
+                <label
+                  >Book Value Per Share (Quarter) | Per Share
+                  <span class="unit">(Rp)</span></label
+                >
+                <input type="number" id="bvps" placeholder="Contoh: 3000" />
+                <small class="hint">Ekuitas ÷ jumlah saham beredar</small>
+              </div>
+              <!-- Profitabilitas -->
+              <div class="form-group">
+                <label
+                  >Return on Equity (rata-rata 5th) | Profitability
+                  <span class="unit">(%)</span></label
+                >
+                <input type="number" id="roe" placeholder="Contoh: 22" />
+                <small class="hint">Idealnya rata-rata 5 tahun, bukan 1 kuartal</small>
+              </div>
+              <div class="form-group">
+                <label
+                  >Return on Assets (rata-rata 5th) | Profitability
+                  <span class="unit">(%)</span></label
+                >
+                <input type="number" id="roa" placeholder="Contoh: 12" />
+              </div>
+              <div class="form-group">
+                <label
+                  >Net Profit Margin | Profitability
+                  <span class="unit">(%)</span></label
+                >
+                <input type="number" id="npm" placeholder="Contoh: 25" />
+              </div>
+              <div class="form-group">
+                <label
+                  >Operating Profit Margin | Profitability
+                  <span class="unit">(%)</span></label
+                >
+                <input type="number" id="opm" placeholder="Contoh: 30" />
+              </div>
+              <!-- Growth -->
+              <div class="form-group">
+                <label
+                  >Revenue (Quarter YoY Growth) | Growth (pc)
+                  <span class="unit">(%)</span></label
+                >
+                <input type="number" id="revGrowth" placeholder="Contoh: 12" />
+              </div>
+              <div class="form-group">
+                <label
+                  >Net Income (Quarter YoY Growth) | Growth (pc)
+                  <span class="unit">(%)</span></label
+                >
+                <input type="number" id="niGrowth" placeholder="Contoh: 18" />
+              </div>
+              <div class="form-group">
+                <label
+                  >EPS/Laba Growth Rata-rata 3-5 Tahun (opsional)
+                  <span class="unit">(% CAGR)</span></label
+                >
+                <input
+                  type="number"
+                  id="growthAvgLong"
+                  placeholder="Contoh: 14"
+                />
+                <small class="hint"
+                  >Jika diisi, dipakai menggantikan growth 1 kuartal di atas
+                  (lebih stabil &amp; akurat untuk PEG, Graham, DCF)</small
+                >
+              </div>
+              <!-- Kesehatan Keuangan -->
+              <div class="form-group">
+                <label
+                  >Debt to Equity Ratio (Quarter) | Solvency
+                  <span class="unit">(kali)</span></label
+                >
+                <input type="number" id="der" placeholder="Contoh: 0.4" />
+              </div>
+              <div class="form-group">
+                <label
+                  >Current Ratio (Quarter) | Solvency
+                  <span class="unit">(kali)</span></label
+                >
+                <input type="number" id="cr" placeholder="Contoh: 2.5" />
+              </div>
+
+              <!-- Cash Flow -->
+              <div class="form-group">
+                <label
+                  >Free Cash Flow (TTM) | Cash Flow Statement
+                  <span class="unit">(Rp juta)</span></label
+                >
+                <input type="number" id="fcf" placeholder="Contoh: 5000" />
+              </div>
+              <div class="form-group">
+                <label
+                  >Cash From Operations | Cash Flow Statement
+                  <span class="unit">(Rp juta)</span></label
+                >
+                <input type="number" id="ocf" placeholder="Contoh: 7000" />
+              </div>
+              <!-- Dividen -->
+              <div class="form-group">
+                <label
+                  >Dividend Yield | Dividend<span class="unit">(%)</span></label
+                >
+                <input type="number" id="divYield" placeholder="Contoh: 3.5" />
+              </div>
+              <div class="form-group">
+                <label
+                  >Payout Ratio | Dividend <span class="unit">(%)</span></label
+                >
+                <input type="number" id="dpr" placeholder="Contoh: 40" />
+                <small class="hint"
+                  >Dipakai untuk hitung sustainable growth rate di metode
+                  PBV</small
+                >
+              </div>
+              <!-- Valuasi historis -->
+              <div class="form-group">
+                <label
+                  >PER Rata-rata 5 Tahun (opsional)
+                  <span class="unit">(x)</span></label
+                >
+                <input type="number" id="perHistoris" placeholder="Contoh: 14" />
+                <small class="hint"
+                  >Rata-rata PER historis saham ini (Stockbit → Valuation →
+                  5Y Avg PE). Membuat Target PER lebih relevan dengan
+                  histori pasar, bukan hanya rumus kualitas.</small
+                >
+              </div>
+              <!-- DCF Parameters -->
+              <div class="form-group">
+                <label
+                  >Current Shares Outstanding
+                  <span class="unit">(juta lembar)</span></label
+                >
+                <input type="number" id="sharesOut" placeholder="Contoh: 1000" />
+              </div>
+              <div class="form-group">
+                <label>
+                  Discount Rate / Cost of Equity
+                  <span class="unit">(%)</span>
+                </label>
+
+                <input
+                  type="number"
+                  id="discountRate"
+                  placeholder="Default 12%"
+                />
+
+                <small class="hint">
+                  Kosongkan jika menggunakan default 12%. Dipakai sebagai
+                  discount rate DCF dan Ke pada Justified PBV.
+                </small>
+              </div>
+              <div class="form-group">
+                <label>
+                  Terminal Growth Rate
+
+                  <span class="unit">(%)</span>
+                </label>
+
+                <input
+                  type="number"
+                  id="terminalGrowth"
+                  placeholder="Default 3%"
+                />
+
+                <small class="hint"> Kosongkan jika menggunakan default 3%. </small>
               </div>
             </div>
 
-            <button class="btn-calc" onclick="calculate()"><span>🔍</span> Hitung Analisis &amp; Harga Wajar</button>
+            <button class="btn-calc" onclick="calculate()">
+              <span>🔍</span> Hitung Harga Wajar Sekarang
+            </button>
             <button class="btn-reset" onclick="resetForm()">↺ Reset Form</button>
           </div>
         </div>
 
-        <!-- PANDUAN / GLOSSARY -->
+        <!-- PANDUAN / GLOSSARY (statis, selalu tampil) -->
         <div class="card">
           <div class="card-header">
             <div class="card-header-icon">📘</div>
             <div>
               <h2>Panduan: Apa Arti Setiap Angka?</h2>
-              <p>Penjelasan singkat setiap metrik dan metode di bawah</p>
+              <p>Penjelasan singkat setiap metode dan metrik di bawah</p>
             </div>
           </div>
           <div class="card-body">
-            <dl class="glossary" id="glossaryList"></dl>
+            <dl class="glossary">
+              <div class="glossary-item">
+                <dt>Final Fair Value</dt>
+                <dd>
+                  Harga wajar akhir hasil rata-rata tertimbang (weighted
+                  average) dari 5 metode: DCF 30%, PER 25%, PBV 20%, Graham
+                  15%, PEG 10%. Tidak ada satu metode yang mendominasi, jadi
+                  hasilnya lebih seimbang antar sudut pandang (arus kas,
+                  earning, aset, dan growth).
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Discount</dt>
+                <dd>
+                  Seberapa "murah" harga saat ini dibanding fair value.
+                  Rumus: (Fair Value − Harga) ÷ Fair Value. Semakin besar
+                  angka positifnya, semakin murah sahamnya dari sisi valuasi.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Upside Potential</dt>
+                <dd>
+                  Potensi kenaikan harga jika saham mencapai fair value.
+                  Rumus: (Fair Value − Harga) ÷ Harga saat ini.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Margin of Safety (MOS)</dt>
+                <dd>
+                  Harga ideal untuk entry menurut prinsip Benjamin Graham:
+                  Fair Value dikurangi buffer risiko 30%, untuk mengantisipasi
+                  kesalahan estimasi/proyeksi.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Target PER</dt>
+                <dd>
+                  Rasio P/E yang dianggap wajar untuk saham ini, dihitung dari
+                  kombinasi ROE, growth, net margin — dan jika diisi, dirata-rata
+                  50:50 dengan PER historis 5 tahun saham tersebut. Fair Value
+                  PER = EPS × Target PER.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Target PBV (Justified P/BV)</dt>
+                <dd>
+                  Menggunakan rumus standar valuasi: (ROE − g) ÷ (Ke − g), di
+                  mana g = sustainable growth (ROE × retention ratio) dan Ke =
+                  cost of equity/discount rate. Jadi PBV wajar 4,0x artinya:
+                  berdasarkan profitabilitas (ROE) dan growth perusahaan
+                  dibanding cost of equity-nya, pasar secara wajar bisa
+                  menghargai ekuitas perusahaan 4 kali lipat dari nilai buku
+                  per sahamnya — bukan angka sembarang, tapi hasil model
+                  Gordon Growth pada nilai buku.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>DCF (Discounted Cash Flow)</dt>
+                <dd>
+                  Memproyeksikan Free Cash Flow 5 tahun ke depan lalu
+                  didiskon ke nilai sekarang memakai discount rate, ditambah
+                  nilai terminal (Terminal Value). Paling mendekati "nilai
+                  intrinsik" tapi paling sensitif terhadap asumsi growth &amp;
+                  discount rate.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Graham Number</dt>
+                <dd>
+                  √(22.5 × EPS × BVPS) — formula klasik Benjamin Graham yang
+                  membatasi P/E ≤ 15 dan P/BV ≤ 1.5 sekaligus. Cenderung
+                  konservatif dan tidak bergantung pada asumsi growth, cocok
+                  sebagai "batas bawah" kewajaran harga.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>PEG Ratio</dt>
+                <dd>
+                  Menilai wajar tidaknya PER dibanding growth: PEG = PER ÷
+                  Growth. Fair value dihitung dengan asumsi PEG = 1, artinya
+                  Target PER = growth (%) itu sendiri. Cocok untuk saham
+                  growth, kurang cocok untuk saham growth rendah/stagnan.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Fundamental Score</dt>
+                <dd>
+                  Skor 0–100 dari 10 parameter kesehatan bisnis (ROE, ROA,
+                  DER, Current Ratio, growth, FCF, margin, dividen). Menilai
+                  kualitas bisnis, terpisah dari murah/mahalnya harga.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Valuation Score</dt>
+                <dd>
+                  Skor 0–100 dari 3 komponen: Discount (40 poin), Upside (30
+                  poin), dan posisi harga terhadap Margin of Safety (30
+                  poin). Menilai murah/mahalnya harga saat ini.
+                </dd>
+              </div>
+              <div class="glossary-item">
+                <dt>Investment Score</dt>
+                <dd>
+                  Gabungan akhir: 60% Fundamental Score + 40% Valuation
+                  Score. Bisnis bagus lebih diprioritaskan daripada sekadar
+                  murah, karena bisnis buruk yang murah bisa tetap
+                  "value trap".
+                </dd>
+              </div>
+            </dl>
           </div>
         </div>
 
@@ -145,43 +1088,19 @@
             <div class="reco-score" id="recoScore">—</div>
             <div class="reco-label" id="recoLabel">—</div>
             <div class="reco-sub" id="recoSub">—</div>
-            <div id="statusBadge"></div>
           </div>
 
           <!-- FAIR VALUE SUMMARY -->
           <div class="card">
             <div class="card-header">
               <div class="card-header-icon">💰</div>
-              <div><h2>Ringkasan Valuasi</h2><p id="summaryEmiten">—</p></div>
-            </div>
-            <div class="card-body"><div class="metric-grid" id="summaryMetrics"></div></div>
-          </div>
-
-          <!-- CHARTS -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-header-icon">📈</div>
-              <div><h2>Grafik Kinerja &amp; Valuasi</h2><p>Visualisasi tren keuangan dan perbandingan metode valuasi</p></div>
-            </div>
-            <div class="card-body chart-card-body">
-              <div class="chart-grid-2">
-                <div>
-                  <div class="score-name" style="margin-bottom:8px;display:block;">Tren Pendapatan, Laba Operasi &amp; Laba Bersih</div>
-                  <div class="chart-wrap"><canvas id="chartTrend"></canvas></div>
-                </div>
-                <div>
-                  <div class="score-name" style="margin-bottom:8px;display:block;">Tren Profitabilitas (ROE, ROA, NPM)</div>
-                  <div class="chart-wrap"><canvas id="chartMargin"></canvas></div>
-                </div>
-                <div>
-                  <div class="score-name" style="margin-bottom:8px;display:block;">Harga Wajar per Metode vs Harga Saat Ini</div>
-                  <div class="chart-wrap"><canvas id="chartMethods"></canvas></div>
-                </div>
-                <div>
-                  <div class="score-name" style="margin-bottom:8px;display:block;">Profil Skor (Radar)</div>
-                  <div class="chart-wrap"><canvas id="chartRadar"></canvas></div>
-                </div>
+              <div>
+                <h2>Ringkasan Valuasi</h2>
+                <p id="summaryEmiten">—</p>
               </div>
+            </div>
+            <div class="card-body">
+              <div class="metric-grid" id="summaryMetrics"></div>
             </div>
           </div>
 
@@ -189,11 +1108,25 @@
           <div class="card">
             <div class="card-header">
               <div class="card-header-icon">📊</div>
-              <div><h2>Breakdown 5 Metode Valuasi</h2><p>Detail kalkulasi setiap metode dan kontribusinya ke Harga Wajar Akhir</p></div>
+              <div>
+                <h2>Breakdown 5 Metode Valuasi</h2>
+                <p>
+                  Detail kalkulasi setiap metode dan kontribusinya ke Final
+                  Fair Value
+                </p>
+              </div>
             </div>
             <div class="card-body" style="padding: 0; overflow-x: auto">
               <table class="method-table">
-                <thead><tr><th>Metode</th><th>Harga Wajar</th><th>Bobot</th><th>Kontribusi</th><th>vs Harga Saat Ini</th></tr></thead>
+                <thead>
+                  <tr>
+                    <th>Metode</th>
+                    <th>Fair Value</th>
+                    <th>Bobot</th>
+                    <th>Kontribusi</th>
+                    <th>vs Harga Saat Ini</th>
+                  </tr>
+                </thead>
                 <tbody id="methodTableBody"></tbody>
               </table>
             </div>
@@ -203,26 +1136,47 @@
           <div class="card">
             <div class="card-header">
               <div class="card-header-icon">🏆</div>
-              <div><h2>Overall Score</h2><p>5 komponen skor kesehatan bisnis &amp; valuasi</p></div>
+              <div>
+                <h2>Score Analysis</h2>
+                <p>Skor fundamental, valuasi, dan gabungan (Investment Score)</p>
+              </div>
             </div>
-            <div class="card-body"><div id="scoreDisplay"></div></div>
+            <div class="card-body">
+              <div id="scoreDisplay"></div>
+            </div>
           </div>
 
-          <!-- RASIO TAHUNAN -->
+          <!-- FUNDAMENTAL BREAKDOWN -->
           <div class="card">
             <div class="card-header">
               <div class="card-header-icon">🔬</div>
-              <div><h2>Rasio Keuangan per Tahun (Hasil Hitung Otomatis)</h2><p>Profitabilitas, growth, kesehatan keuangan, dan arus kas tiap tahun</p></div>
+              <div>
+                <h2>Detail Fundamental Score</h2>
+                <p>Penilaian 10 parameter fundamental</p>
+              </div>
             </div>
             <div class="card-body" style="padding: 0; overflow-x: auto">
-              <table class="fin-view-table" id="ratioTable"></table>
+              <table class="fund-table">
+                <thead>
+                  <tr>
+                    <th>Parameter</th>
+                    <th>Nilai Input</th>
+                    <th>Threshold</th>
+                    <th>Max Poin</th>
+                    <th>Poin Dapat</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="fundTableBody"></tbody>
+              </table>
             </div>
           </div>
 
           <div class="disclaimer">
-            ⚠️ <strong>Disclaimer:</strong> Hasil kalkulasi ini bersifat edukatif dan tidak
-            merupakan saran investasi. Harga wajar dihitung berdasarkan data dan asumsi yang
-            dimasukkan pengguna. Selalu lakukan riset mandiri dan konsultasi dengan penasihat
+            ⚠️ <strong>Disclaimer:</strong> Hasil kalkulasi ini bersifat
+            edukatif dan tidak merupakan saran investasi. Harga wajar
+            dihitung berdasarkan data dan asumsi yang dimasukkan pengguna.
+            Selalu lakukan riset mandiri dan konsultasi dengan penasihat
             keuangan profesional sebelum mengambil keputusan investasi.
           </div>
         </div>
@@ -235,13 +1189,19 @@
         <div class="card">
           <div class="card-header">
             <div class="card-header-icon">📊</div>
-            <div><h2>Kalkulator Untung / Rugi</h2><p>Hitung estimasi profit/loss posisi sahammu berdasarkan harga jual/prediksi</p></div>
+            <div>
+              <h2>Kalkulator Untung / Rugi</h2>
+              <p>
+                Hitung estimasi profit/loss posisi sahammu berdasarkan harga
+                jual/prediksi
+              </p>
+            </div>
           </div>
           <div class="card-body">
             <div class="form-grid">
               <div class="form-group">
                 <label>Harga Beli / Average <span class="unit">(Rp per lembar)</span></label>
-                <input type="text" inputmode="decimal" class="fmt-number" id="plHargaBeli" placeholder="Contoh: 2.000" oninput="formatNumberLive(event)" />
+                <input type="number" id="plHargaBeli" placeholder="Contoh: 2000" />
               </div>
               <div class="form-group">
                 <label>Jumlah Lot Dimiliki <span class="unit">(1 lot = 100 lembar)</span></label>
@@ -249,7 +1209,7 @@
               </div>
               <div class="form-group">
                 <label>Harga Jual / Prediksi <span class="unit">(Rp per lembar)</span></label>
-                <input type="text" inputmode="decimal" class="fmt-number" id="plHargaJual" placeholder="Contoh: 2.300" oninput="formatNumberLive(event)" />
+                <input type="number" id="plHargaJual" placeholder="Contoh: 2300" />
               </div>
               <div class="form-group">
                 <label>Fee Beli <span class="unit">(%, opsional)</span></label>
@@ -262,12 +1222,14 @@
                 <small class="hint">Kosongkan untuk default 0.25% (termasuk PPh final 0.1%)</small>
               </div>
             </div>
-            <button class="btn-calc" onclick="calculatePL()"><span>🧮</span> Hitung Untung / Rugi</button>
+            <button class="btn-calc" onclick="calculatePL()">
+              <span>🧮</span> Hitung Untung / Rugi
+            </button>
             <button class="btn-reset" onclick="resetPL()">↺ Reset Form</button>
           </div>
         </div>
 
-        <div id="plResults">
+        <div id="plResults" style="display: none">
           <div class="pl-banner" id="plBanner">
             <div class="pl-pct" id="plPct">—</div>
             <div class="pl-label" id="plLabel">—</div>
@@ -275,9 +1237,14 @@
           <div class="card">
             <div class="card-header">
               <div class="card-header-icon">🧾</div>
-              <div><h2>Detail Perhitungan</h2><p>Termasuk estimasi biaya transaksi (fee broker + pajak)</p></div>
+              <div>
+                <h2>Detail Perhitungan</h2>
+                <p>Termasuk estimasi biaya transaksi (fee broker + pajak)</p>
+              </div>
             </div>
-            <div class="card-body"><div class="metric-grid" id="plMetrics"></div></div>
+            <div class="card-body">
+              <div class="metric-grid" id="plMetrics"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -289,7 +1256,13 @@
         <div class="card">
           <div class="card-header">
             <div class="card-header-icon">🔄</div>
-            <div><h2>Kalkulator Average (Harga Rata-rata)</h2><p>Hitung harga average baru saat menambah (average down/up) posisi saham</p></div>
+            <div>
+              <h2>Kalkulator Average (Harga Rata-rata)</h2>
+              <p>
+                Hitung harga average baru saat menambah (average down/up)
+                posisi saham
+              </p>
+            </div>
           </div>
           <div class="card-body">
             <div class="form-grid">
@@ -299,7 +1272,7 @@
               </div>
               <div class="form-group">
                 <label>Harga Average Saat Ini <span class="unit">(Rp)</span></label>
-                <input type="text" inputmode="decimal" class="fmt-number" id="avgHargaLama" placeholder="Contoh: 200" oninput="formatNumberLive(event)" />
+                <input type="number" id="avgHargaLama" placeholder="Contoh: 200" />
               </div>
               <div class="form-group">
                 <label>Lot Tambahan yang Dibeli</label>
@@ -307,15 +1280,17 @@
               </div>
               <div class="form-group">
                 <label>Harga Beli Tambahan <span class="unit">(Rp)</span></label>
-                <input type="text" inputmode="decimal" class="fmt-number" id="avgHargaBaru" placeholder="Contoh: 190" oninput="formatNumberLive(event)" />
+                <input type="number" id="avgHargaBaru" placeholder="Contoh: 190" />
               </div>
             </div>
-            <button class="btn-calc" onclick="calculateAverage()"><span>🔄</span> Hitung Average Baru</button>
+            <button class="btn-calc" onclick="calculateAverage()">
+              <span>🔄</span> Hitung Average Baru
+            </button>
             <button class="btn-reset" onclick="resetAverage()">↺ Reset Form</button>
           </div>
         </div>
 
-        <div id="avgResults">
+        <div id="avgResults" style="display: none">
           <div class="reco-banner reco-bagus" id="avgBanner">
             <div class="reco-score" id="avgScore">—</div>
             <div class="reco-label">Harga Average Baru</div>
@@ -324,14 +1299,691 @@
           <div class="card">
             <div class="card-header">
               <div class="card-header-icon">🧾</div>
-              <div><h2>Detail Perhitungan</h2><p>Total lot, total modal, dan perubahan average</p></div>
+              <div>
+                <h2>Detail Perhitungan</h2>
+                <p>Total lot, total modal, dan perubahan average</p>
+              </div>
             </div>
-            <div class="card-body"><div class="metric-grid" id="avgMetrics"></div></div>
+            <div class="card-body">
+              <div class="metric-grid" id="avgMetrics"></div>
+            </div>
           </div>
         </div>
       </div>
     </main>
 
-    <script src="script.js"></script>
+    <script>
+      /* ══════════════════════════════════════════
+         HELPERS UMUM
+         ══════════════════════════════════════════ */
+      function v(id) {
+        return parseFloat(document.getElementById(id).value) || 0;
+      }
+      function fmt(n, dec = 0) {
+        if (!isFinite(n) || isNaN(n)) return "—";
+        return n.toLocaleString("id-ID", {
+          minimumFractionDigits: dec,
+          maximumFractionDigits: dec,
+        });
+      }
+
+      function fmtRp(n) {
+        if (!isFinite(n) || isNaN(n)) return "—";
+        return "Rp " + fmt(n, 0);
+      }
+
+      function pct(n) {
+        if (!isFinite(n) || isNaN(n)) return "—";
+        return fmt(n, 1) + "%";
+      }
+
+      function clamp(n, min, max) {
+        return Math.min(Math.max(n, min), max);
+      }
+
+      /* ══════════════════════════════════════════
+         TAB SWITCHER
+         ══════════════════════════════════════════ */
+      function showTab(name) {
+        ["fv", "pl", "avg"].forEach((t) => {
+          document
+            .getElementById("tab-" + t)
+            .classList.toggle("active", t === name);
+          document
+            .getElementById("tabBtn-" + t)
+            .classList.toggle("active", t === name);
+        });
+      }
+
+      /* ══════════════════════════════════════════
+         TAB 1 — FAIR VALUE
+         ══════════════════════════════════════════ */
+      function resetForm() {
+        document
+          .querySelectorAll('#tab-fv input[type="number"], #tab-fv input[type="text"]')
+          .forEach((el) => (el.value = ""));
+        document.getElementById("results").style.display = "none";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // Bobot metode — sumbernya SATU tempat ini saja, dipakai untuk
+      // fvFinal maupun tabel breakdown, supaya tidak ada lagi mismatch
+      // antara bobot yang ditampilkan dan bobot yang benar-benar dihitung.
+      const WEIGHTS = { dcf: 0.3, per: 0.25, pbv: 0.2, graham: 0.15, peg: 0.1 };
+
+      function calculate() {
+        // Read inputs
+        const emiten = document.getElementById("emiten").value || "Emiten";
+        const harga = v("hargaSaatIni");
+        const eps = v("eps");
+        const bvps = v("bvps");
+        const roe = v("roe");
+        const roa = v("roa");
+        const npm = v("npm");
+        const opm = v("opm");
+        const revGrowth = v("revGrowth");
+        const niGrowth = v("niGrowth");
+        const growthShort = (revGrowth + niGrowth) / 2;
+        const growthLong = v("growthAvgLong");
+        // Prioritaskan growth rata-rata 3-5 tahun (lebih stabil) jika diisi,
+        // fallback ke rata-rata growth quarter YoY.
+        const growth = growthLong > 0 ? growthLong : growthShort;
+        const der = v("der");
+        const cr = v("cr");
+        const fcf = v("fcf");
+        const ocf = v("ocf");
+        const divYield = v("divYield");
+        const dpr = v("dpr");
+        const perHistoris = v("perHistoris");
+        const sharesOut = v("sharesOut");
+        const discRate = v("discountRate") / 100 || 0.12;
+        const terminalInput = v("terminalGrowth");
+        const termGrowth = terminalInput > 0 ? terminalInput / 100 : 0.03;
+
+        // ── 1. PER Fair Value ──
+        // Target PER dihitung kontinu (bukan tangga/step) dari kualitas
+        // ROE + growth + margin, lalu dirata-rata dengan PER historis 5
+        // tahun (jika diisi) agar tidak lepas dari histori valuasi pasar.
+        const qualityPER = roe * 0.4 + growth * 0.35 + npm * 0.25;
+        let targetPER = clamp(8 + qualityPER * 0.32, 6, 30);
+        if (perHistoris > 0) {
+          targetPER = targetPER * 0.5 + perHistoris * 0.5;
+        }
+        const fvPER = eps * targetPER;
+
+        // ── 2. PBV Fair Value — Justified P/BV Model ──
+        // Rumus baku: Justified P/BV = (ROE - g) / (Ke - g)
+        // g = sustainable growth rate = ROE x retention ratio (1 - payout ratio)
+        // Ke = cost of equity, didekati dari Discount Rate input.
+        const gSustainable = (roe / 100) * (1 - dpr / 100);
+        const ke = discRate;
+        let targetPBV;
+        if (ke - gSustainable > 0.005) {
+          targetPBV = (roe / 100 - gSustainable) / (ke - gSustainable);
+        } else {
+          // Ke <= g: growth melebihi cost of equity, formula Gordon Growth
+          // tidak valid (biasanya perusahaan growth sangat tinggi).
+          // Fallback ke nilai netral agar tidak menghasilkan angka ekstrem.
+          targetPBV = 3;
+        }
+        targetPBV = clamp(targetPBV, 0.5, 6);
+        const fvPBV = bvps * targetPBV;
+
+        // ── 3. Graham Number ──
+        // Formula klasik Benjamin Graham: sqrt(22.5 x EPS x BVPS)
+        // Tidak bergantung pada asumsi growth, sehingga lebih objektif
+        // dan berfungsi sebagai batas bawah kewajaran harga.
+        let fvGraham = 0;
+        if (eps > 0 && bvps > 0) {
+          fvGraham = Math.sqrt(22.5 * eps * bvps);
+        } else {
+          const grahamGrowth = Math.min(growth, 20);
+          fvGraham = eps * (8.5 + 2 * grahamGrowth);
+        }
+
+        // ── 4. PEG Fair Value (PEG = 1) ──
+        const normalizedGrowth = clamp(growth, 5, 30);
+        const fvPEG = eps * normalizedGrowth;
+
+        // ── 5. DCF ──
+        const dcfGrowth = clamp(growth, 5, 15);
+
+        let totalPV = 0;
+        let fcfCurr = fcf;
+
+        for (let n = 1; n <= 5; n++) {
+          fcfCurr *= 1 + dcfGrowth / 100;
+
+          totalPV += fcfCurr / Math.pow(1 + discRate, n);
+        }
+
+        const fcf5 = fcfCurr;
+        const tv = (fcf5 * (1 + termGrowth)) / (discRate - termGrowth);
+        const pvTV = tv / Math.pow(1 + discRate, 5);
+        const intrinsicVal = totalPV + pvTV;
+        const fvDCF = sharesOut > 0 ? intrinsicVal / sharesOut : 0;
+
+        // ── Final Fair Value (bobot konsisten dari WEIGHTS) ──
+        const fvFinal =
+          fvDCF * WEIGHTS.dcf +
+          fvPER * WEIGHTS.per +
+          fvPBV * WEIGHTS.pbv +
+          fvGraham * WEIGHTS.graham +
+          fvPEG * WEIGHTS.peg;
+
+        // ── Valuation Metrics ──
+        const discount = harga > 0 ? ((fvFinal - harga) / fvFinal) * 100 : 0;
+        const upside = harga > 0 ? ((fvFinal - harga) / harga) * 100 : 0;
+        const mos = fvFinal * 0.7;
+
+        // ── Fundamental Score (100 poin) ──
+        const fundParams = [
+          {
+            name: "ROE",
+            val: roe,
+            unit: "%",
+            max: 20,
+            threshold: "≥20%",
+            score: roe >= 20 ? 20 : roe >= 15 ? 15 : roe >= 10 ? 10 : 5,
+          },
+
+          {
+            name: "ROA",
+            val: roa,
+            unit: "%",
+            max: 10,
+            threshold: "≥10%",
+            score: roa >= 10 ? 10 : roa >= 7 ? 7 : roa >= 5 ? 5 : 2,
+          },
+
+          {
+            name: "DER",
+            val: der,
+            unit: "x",
+            max: 10,
+            threshold: "≤0.5x",
+            score: der <= 0.5 ? 10 : der <= 1 ? 7 : der <= 1.5 ? 5 : 2,
+          },
+
+          {
+            name: "Current Ratio",
+            val: cr,
+            unit: "x",
+            max: 5,
+            threshold: "≥2x",
+            score: cr >= 2 ? 5 : cr >= 1.5 ? 3 : cr >= 1 ? 2 : 0,
+          },
+
+          {
+            name: "Revenue Growth",
+            val: revGrowth,
+            unit: "%",
+            max: 15,
+            threshold: "≥15%",
+            score:
+              revGrowth >= 20
+                ? 15
+                : revGrowth >= 15
+                  ? 12
+                  : revGrowth >= 10
+                    ? 9
+                    : revGrowth >= 5
+                      ? 6
+                      : 2,
+          },
+
+          {
+            name: "Net Income Growth",
+            val: niGrowth,
+            unit: "%",
+            max: 15,
+            threshold: "≥15%",
+            score:
+              niGrowth >= 20
+                ? 15
+                : niGrowth >= 15
+                  ? 12
+                  : niGrowth >= 10
+                    ? 9
+                    : niGrowth >= 5
+                      ? 6
+                      : 2,
+          },
+
+          {
+            name: "Free Cash Flow",
+            val: fcf,
+            unit: "Juta",
+            max: 15,
+            threshold: "Positif",
+            score: fcf > 0 ? (ocf > 0 ? 15 : 10) : 0,
+          },
+
+          {
+            name: "Net Profit Margin",
+            val: npm,
+            unit: "%",
+            max: 5,
+            threshold: "≥20%",
+            score: npm >= 20 ? 5 : npm >= 15 ? 3 : npm >= 10 ? 2 : 0,
+          },
+
+          {
+            name: "Operating Margin",
+            val: opm,
+            unit: "%",
+            max: 5,
+            threshold: "≥20%",
+            score: opm >= 20 ? 5 : opm >= 15 ? 3 : opm >= 10 ? 2 : 0,
+          },
+
+          {
+            name: "Dividend Yield",
+            val: divYield,
+            unit: "%",
+            max: 5,
+            threshold: "2%-6%",
+            score:
+              divYield >= 2 && divYield <= 6
+                ? 5
+                : divYield > 0 && divYield < 2
+                  ? 3
+                  : divYield > 6
+                    ? 2
+                    : 0,
+          },
+        ];
+
+        const maxFundScore = fundParams.reduce((a, p) => a + p.max, 0);
+
+        const fundScore =
+          (fundParams.reduce((a, p) => a + p.score, 0) / maxFundScore) * 100;
+
+        // ── Valuation Score (100 poin) ──
+        // Discount component (40 pts)
+        let discScore = 0;
+        if (discount >= 40) discScore = 40;
+        else if (discount >= 30) discScore = 32;
+        else if (discount >= 20) discScore = 24;
+        else if (discount >= 10) discScore = 16;
+        else if (discount >= 0) discScore = 8;
+        else discScore = 0;
+
+        // Upside component (30 pts)
+        let upsideScore = 0;
+        if (upside >= 50) upsideScore = 30;
+        else if (upside >= 35) upsideScore = 24;
+        else if (upside >= 20) upsideScore = 18;
+        else if (upside >= 10) upsideScore = 12;
+        else if (upside >= 0) upsideScore = 6;
+        else upsideScore = 0;
+
+        // Margin of Safety component (30 pts)
+        let mosScore =
+          harga <= mos
+            ? 30
+            : harga <= mos * 1.1
+              ? 20
+              : harga <= mos * 1.2
+                ? 10
+                : 0;
+
+        const valScore = discScore + upsideScore + mosScore;
+
+        // ── Investment Score ──
+        const invScore = fundScore * 0.6 + valScore * 0.4;
+
+        // ── Recommendation ──
+        let recoClass, recoLabel, recoSub;
+        if (invScore >= 90) {
+          recoClass = "reco-sangat-bagus";
+          recoLabel = "🚀 Sangat Bagus Dibeli";
+          recoSub =
+            "Perusahaan sangat fundamental dengan valuasi sangat menarik.";
+        } else if (invScore >= 80) {
+          recoClass = "reco-bagus";
+          recoLabel = "✅ Bagus Dibeli";
+          recoSub = "Fundamental solid dengan valuasi yang wajar untuk entry.";
+        } else if (invScore >= 70) {
+          recoClass = "reco-pantau";
+          recoLabel = "👀 Layak Dipantau";
+          recoSub = "Potensi ada, namun tunggu momentum entry yang lebih baik.";
+        } else if (invScore >= 60) {
+          recoClass = "reco-hati";
+          recoLabel = "⏳ Jangan Buru-buru, Pantau";
+          recoSub =
+            "Fundamental atau valuasi perlu perhatian lebih sebelum masuk.";
+        } else if (invScore >= 50) {
+          recoClass = "reco-hindari";
+          recoLabel = "⚠️ Hindari Membeli Saat Ini";
+          recoSub =
+            "Risiko lebih tinggi dari potensi return pada harga saat ini.";
+        } else {
+          recoClass = "reco-sangat-hindari";
+          recoLabel = "🚫 Sangat Hindari";
+          recoSub = "Fundamental lemah dan/atau valuasi sangat mahal saat ini.";
+        }
+
+        // ─── RENDER ───
+        document.getElementById("results").style.display = "block";
+
+        // Reco Banner
+        const banner = document.getElementById("recoBanner");
+        banner.className = "reco-banner " + recoClass;
+        document.getElementById("recoScore").textContent = fmt(invScore, 1);
+        document.getElementById("recoLabel").textContent = recoLabel;
+        document.getElementById("recoSub").textContent =
+          `${emiten.toUpperCase()} — Investment Score ${fmt(invScore, 1)} / 100`;
+
+        // Summary Metrics
+        document.getElementById("summaryEmiten").textContent =
+          `${emiten.toUpperCase()} — Harga Saat Ini: ${fmtRp(harga)}`;
+        const metrics = [
+          {
+            label: "Final Fair Value",
+            val: fmtRp(fvFinal),
+            sub: "Rata-rata tertimbang 5 metode (DCF 30% • PER 25% • PBV 20% • Graham 15% • PEG 10%)",
+            hi: true,
+          },
+          {
+            label: "Harga Saat Ini",
+            val: fmtRp(harga),
+            sub: "Harga pasar saat ini (input kamu)",
+          },
+          {
+            label: "Discount",
+            val: pct(discount),
+            sub: "Seberapa murah harga vs fair value: (FV−Harga)/FV",
+          },
+          {
+            label: "Upside Potential",
+            val: pct(upside),
+            sub: "Potensi kenaikan jika harga capai fair value",
+          },
+          {
+            label: "Margin of Safety",
+            val: fmtRp(mos),
+            sub: "Harga ideal entry = Fair Value − buffer risiko 30%",
+          },
+          {
+            label: "Target PER",
+            val: `${fmt(targetPER, 1)}x`,
+            sub:
+              perHistoris > 0
+                ? "50% formula (ROE+Growth+Margin) + 50% PER historis 5th"
+                : "Dari kualitas ROE, growth & net margin",
+          },
+          {
+            label: "Target PBV",
+            val: `${fmt(targetPBV, 1)}x`,
+            sub: "Justified P/BV = (ROE−g) ÷ (Ke−g), g = ROE × retention ratio",
+          },
+        ];
+        document.getElementById("summaryMetrics").innerHTML = metrics
+          .map(
+            (m) =>
+              `<div class="metric-card${m.hi ? " highlight" : ""}">
+        <div class="metric-label">${m.label}</div>
+        <div class="metric-val">${m.val}</div>
+        <div class="metric-sub">${m.sub}</div>
+      </div>`,
+          )
+          .join("");
+
+        // Method Table
+        const methods = [
+          {
+            name: "DCF",
+            fv: fvDCF,
+            w: WEIGHTS.dcf,
+            wlabel: WEIGHTS.dcf * 100 + "%",
+          },
+          {
+            name: "PER",
+            fv: fvPER,
+            w: WEIGHTS.per,
+            wlabel: WEIGHTS.per * 100 + "%",
+          },
+          {
+            name: "PBV (Justified)",
+            fv: fvPBV,
+            w: WEIGHTS.pbv,
+            wlabel: WEIGHTS.pbv * 100 + "%",
+          },
+          {
+            name: "Graham Number",
+            fv: fvGraham,
+            w: WEIGHTS.graham,
+            wlabel: WEIGHTS.graham * 100 + "%",
+          },
+          {
+            name: "PEG (PEG=1)",
+            fv: fvPEG,
+            w: WEIGHTS.peg,
+            wlabel: WEIGHTS.peg * 100 + "%",
+          },
+        ];
+        document.getElementById("methodTableBody").innerHTML =
+          methods
+            .map((m) => {
+              const diff = harga > 0 ? ((m.fv - harga) / harga) * 100 : 0;
+              const sign = diff >= 0 ? "+" : "";
+              const diffColor = diff >= 0 ? "color:#15803d" : "color:#dc2626";
+              return `<tr>
+        <td><span class="method-name">${m.name}</span></td>
+        <td><strong>${fmtRp(m.fv)}</strong></td>
+        <td><span class="method-weight">${m.wlabel}</span></td>
+        <td>${fmtRp(m.fv * m.w)}</td>
+        <td style="${diffColor};font-weight:600;">${sign}${pct(diff)}</td>
+      </tr>`;
+            })
+            .join("") +
+          `<tr style="background:var(--green-50);">
+      <td colspan="3"><strong>Final Fair Value</strong></td>
+      <td colspan="2"><strong style="color:var(--green-700);font-size:1rem;">${fmtRp(fvFinal)}</strong></td>
+    </tr>`;
+
+        // Score Bars
+        document.getElementById("scoreDisplay").innerHTML = `
+      <div class="score-section">
+        <div class="score-header">
+          <span class="score-name">Fundamental Score (Bobot 60%)</span>
+          <span class="score-num">${fmt(fundScore, 0)} / 100</span>
+        </div>
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:${fundScore}%"></div></div>
+      </div>
+      <div class="score-section">
+        <div class="score-header">
+          <span class="score-name">Valuation Score (Bobot 40%)</span>
+          <span class="score-num">${fmt(valScore, 0)} / 100</span>
+        </div>
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:${valScore}%"></div></div>
+      </div>
+      <div class="score-section" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--green-100);">
+        <div class="score-header">
+          <span class="score-name" style="font-size:0.9rem;font-weight:700;color:var(--green-800)">Investment Score (60% × Fund + 40% × Val)</span>
+          <span class="score-num" style="font-size:1.1rem;color:var(--green-700)">${fmt(invScore, 1)} / 100</span>
+        </div>
+        <div class="score-bar-bg" style="height:14px;"><div class="score-bar-fill" style="width:${invScore}%"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:20px;">
+        ${[
+          ["≥ 90", "Sangat Bagus Dibeli", invScore >= 90],
+          ["80–89", "Bagus Dibeli", invScore >= 80 && invScore < 90],
+          ["70–79", "Layak Dipantau", invScore >= 70 && invScore < 80],
+          ["60–69", "Jangan Buru-buru", invScore >= 60 && invScore < 70],
+          ["50–59", "Hindari", invScore >= 50 && invScore < 60],
+          ["< 50", "Sangat Hindari", invScore < 50],
+        ]
+          .map(
+            ([range, label, active]) => `
+          <div style="padding:10px 12px;border-radius:8px;border:2px solid ${active ? "var(--green-500)" : "var(--gray-200)"};background:${active ? "var(--green-50)" : "white"};">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:${active ? "var(--green-700)" : "var(--gray-400)"};">${range}</div>
+            <div style="font-size:0.82rem;font-weight:600;color:${active ? "var(--green-800)" : "var(--gray-500)"};margin-top:3px;">${label}</div>
+          </div>`,
+          )
+          .join("")}
+      </div>
+    `;
+
+        // Fundamental Table
+        document.getElementById("fundTableBody").innerHTML =
+          fundParams
+            .map((p) => {
+              const statusClass =
+                p.score === p.max
+                  ? "status-pass"
+                  : p.score > 0
+                    ? "status-partial"
+                    : "status-fail";
+              const statusIcon =
+                p.score === p.max ? "✓" : p.score > 0 ? "~" : "✗";
+              const statusText =
+                p.score === p.max ? "Pass" : p.score > 0 ? "Partial" : "Fail";
+              return `<tr>
+        <td><strong>${p.name}</strong></td>
+        <td>${fmt(p.val, 1)}${p.unit}</td>
+        <td style="color:var(--gray-500)">${p.threshold}</td>
+        <td style="text-align:center">${p.max}</td>
+        <td style="text-align:center;font-weight:700;color:var(--green-700)">${p.score}</td>
+        <td><span class="${statusClass}">${statusIcon} ${statusText}</span></td>
+      </tr>`;
+            })
+            .join("") +
+          `<tr style="background:var(--green-50);">
+      <td colspan="3"><strong>Total Fundamental Score</strong></td>
+      <td style="text-align:center"><strong>100</strong></td>
+      <td style="text-align:center;font-weight:800;color:var(--green-700);font-size:0.95rem">${fmt(fundScore, 0)}</td>
+      <td></td>
+    </tr>`;
+
+        // Scroll to results
+        document
+          .getElementById("results")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      /* ══════════════════════════════════════════
+         TAB 2 — KALKULATOR UNTUNG / RUGI
+         ══════════════════════════════════════════ */
+      function resetPL() {
+        ["plHargaBeli", "plLot", "plHargaJual", "plFeeBeli", "plFeeJual"].forEach(
+          (id) => (document.getElementById(id).value = ""),
+        );
+        document.getElementById("plResults").style.display = "none";
+      }
+
+      function calculatePL() {
+        const hargaBeli = v("plHargaBeli");
+        const lot = v("plLot");
+        const hargaJual = v("plHargaJual");
+        const feeBeliPct = v("plFeeBeli") > 0 ? v("plFeeBeli") : 0.15;
+        const feeJualPct = v("plFeeJual") > 0 ? v("plFeeJual") : 0.25;
+
+        const lembar = lot * 100;
+        const modalKotor = hargaBeli * lembar;
+        const biayaBeli = modalKotor * (feeBeliPct / 100);
+        const modalBersih = modalKotor + biayaBeli;
+
+        const nilaiJualKotor = hargaJual * lembar;
+        const biayaJual = nilaiJualKotor * (feeJualPct / 100);
+        const nilaiJualBersih = nilaiJualKotor - biayaJual;
+
+        const untungRugiRp = nilaiJualBersih - modalBersih;
+        const untungRugiPct =
+          modalBersih > 0 ? (untungRugiRp / modalBersih) * 100 : 0;
+
+        document.getElementById("plResults").style.display = "block";
+        const banner = document.getElementById("plBanner");
+        const isUntung = untungRugiRp >= 0;
+        banner.className = "pl-banner " + (isUntung ? "pl-untung" : "pl-rugi");
+        document.getElementById("plPct").textContent =
+          (isUntung ? "+" : "") + pct(untungRugiPct);
+        document.getElementById("plLabel").textContent = isUntung
+          ? `🚀 Untung ${fmtRp(Math.abs(untungRugiRp))}`
+          : `📉 Rugi ${fmtRp(Math.abs(untungRugiRp))}`;
+
+        const metrics = [
+          { label: "Total Lembar Saham", val: fmt(lembar) + " lembar" },
+          { label: "Modal Awal (Bersih)", val: fmtRp(modalBersih), sub: `Termasuk fee beli ${fmt(feeBeliPct, 2)}%` },
+          { label: "Nilai Jual (Bersih)", val: fmtRp(nilaiJualBersih), sub: `Setelah fee jual ${fmt(feeJualPct, 2)}%` },
+          {
+            label: isUntung ? "Total Untung" : "Total Rugi",
+            val: fmtRp(Math.abs(untungRugiRp)),
+            sub: isUntung ? "Selisih nilai jual − modal" : "Selisih modal − nilai jual",
+            hi: true,
+          },
+          { label: "Persentase", val: (isUntung ? "+" : "") + pct(untungRugiPct), sub: "Terhadap modal bersih" },
+          { label: "Biaya Transaksi Total", val: fmtRp(biayaBeli + biayaJual), sub: "Fee beli + fee jual" },
+        ];
+        document.getElementById("plMetrics").innerHTML = metrics
+          .map(
+            (m) => `<div class="metric-card${m.hi ? " highlight" : ""}">
+        <div class="metric-label">${m.label}</div>
+        <div class="metric-val">${m.val}</div>
+        <div class="metric-sub">${m.sub || ""}</div>
+      </div>`,
+          )
+          .join("");
+
+        document
+          .getElementById("plResults")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      /* ══════════════════════════════════════════
+         TAB 3 — KALKULATOR AVERAGE
+         ══════════════════════════════════════════ */
+      function resetAverage() {
+        ["avgLotLama", "avgHargaLama", "avgLotBaru", "avgHargaBaru"].forEach(
+          (id) => (document.getElementById(id).value = ""),
+        );
+        document.getElementById("avgResults").style.display = "none";
+      }
+
+      function calculateAverage() {
+        const lotLama = v("avgLotLama");
+        const hargaLama = v("avgHargaLama");
+        const lotBaru = v("avgLotBaru");
+        const hargaBaru = v("avgHargaBaru");
+
+        const modalLama = lotLama * 100 * hargaLama;
+        const modalBaru = lotBaru * 100 * hargaBaru;
+        const totalLot = lotLama + lotBaru;
+        const totalModal = modalLama + modalBaru;
+        const avgBaru = totalLot > 0 ? totalModal / (totalLot * 100) : 0;
+        const perubahan = hargaLama > 0 ? ((avgBaru - hargaLama) / hargaLama) * 100 : 0;
+
+        document.getElementById("avgResults").style.display = "block";
+        document.getElementById("avgScore").textContent = fmtRp(avgBaru);
+        document.getElementById("avgSub").textContent =
+          `Dari ${fmt(lotLama)} lot @${fmtRp(hargaLama)} + ${fmt(lotBaru)} lot @${fmtRp(hargaBaru)}`;
+
+        const metrics = [
+          { label: "Total Lot Setelah Beli", val: fmt(totalLot) + " lot", sub: `${fmt(lotLama)} lot lama + ${fmt(lotBaru)} lot baru` },
+          { label: "Total Modal", val: fmtRp(totalModal), sub: "Modal lama + modal tambahan" },
+          { label: "Harga Average Lama", val: fmtRp(hargaLama), sub: "Sebelum penambahan" },
+          { label: "Harga Average Baru", val: fmtRp(avgBaru), sub: "Setelah penambahan", hi: true },
+          {
+            label: perubahan <= 0 ? "Average Turun" : "Average Naik",
+            val: (perubahan <= 0 ? "" : "+") + pct(perubahan),
+            sub: "Perubahan average lama → baru",
+          },
+        ];
+        document.getElementById("avgMetrics").innerHTML = metrics
+          .map(
+            (m) => `<div class="metric-card${m.hi ? " highlight" : ""}">
+        <div class="metric-label">${m.label}</div>
+        <div class="metric-val">${m.val}</div>
+        <div class="metric-sub">${m.sub || ""}</div>
+      </div>`,
+          )
+          .join("");
+
+        document
+          .getElementById("avgResults")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    </script>
   </body>
 </html>
