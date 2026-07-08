@@ -27,6 +27,63 @@ function pct(n, dec = 1) {
   if (!isFinite(n) || isNaN(n)) return "—";
   return fmt(n, dec) + "%";
 }
+
+/* ══════════════════════════════════════════
+   FORMAT RIBUAN OTOMATIS (Rp gaya Indonesia)
+   Contoh: ketik 24000000,23 -> tampil 24.000.000,23
+   ══════════════════════════════════════════ */
+
+// Ubah string terformat ("24.000.000,23") -> angka murni (24000000.23)
+function parseFormatted(str) {
+  if (str === null || str === undefined || str === "") return null;
+  const clean = str.toString().replace(/\./g, "").replace(",", ".");
+  const n = parseFloat(clean);
+  return isNaN(n) ? null : n;
+}
+
+// Format angka murni -> string gaya Indonesia (dipakai saat render awal, bukan saat mengetik)
+function formatStatic(n) {
+  if (n === null || n === undefined || isNaN(n)) return "";
+  return n.toLocaleString("id-ID", { maximumFractionDigits: 2 });
+}
+
+// Format LIVE saat user mengetik, sambil menjaga posisi kursor
+function formatNumberLive(e) {
+  const input = e.target;
+  const cursorPos = input.selectionStart;
+  const rawBefore = input.value;
+  const digitsBeforeCursor = rawBefore.substring(0, cursorPos).replace(/[^0-9]/g, "").length;
+
+  // hanya izinkan digit dan satu koma desimal
+  let raw = rawBefore.replace(/[^0-9,]/g, "");
+  const firstComma = raw.indexOf(",");
+  if (firstComma !== -1) {
+    raw = raw.substring(0, firstComma + 1) + raw.substring(firstComma + 1).replace(/,/g, "");
+  }
+
+  let [intPart, decPart] = raw.split(",");
+  intPart = intPart.replace(/^0+(?=\d)/, "");
+  const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const formatted = formattedInt + (decPart !== undefined ? "," + decPart : raw.endsWith(",") ? "," : "");
+
+  input.value = formatted;
+
+  // kembalikan posisi kursor berdasarkan jumlah digit sebelum posisi semula
+  let pos = 0, digitCount = 0;
+  while (pos < formatted.length && digitCount < digitsBeforeCursor) {
+    if (/[0-9]/.test(formatted[pos])) digitCount++;
+    pos++;
+  }
+  input.setSelectionRange(pos, pos);
+}
+
+// Ambil nilai numerik dari input yang pakai format ribuan (fmt-number)
+function vf(id) {
+  const el = document.getElementById(id);
+  if (!el) return 0;
+  const n = parseFormatted(el.value);
+  return n === null ? 0 : n;
+}
 function clamp(n, min, max) {
   if (isNaN(n)) return min;
   return Math.min(Math.max(n, min), max);
@@ -98,7 +155,7 @@ function renderFinTable() {
     body += `<tr><th>${f.label}</th>`;
     for (let i = 0; i < yearCount; i++) {
       const val = finData[f.key][i];
-      body += `<td><input type="number" class="fin-cell-input" placeholder="${f.ph}" value="${val === null ? "" : val}" oninput="updateCell('${f.key}', ${i}, this.value)" /></td>`;
+      body += `<td><input type="text" inputmode="decimal" class="fin-cell-input fmt-number" placeholder="${f.ph}" value="${formatStatic(val)}" oninput="handleFinCellInput(event, '${f.key}', ${i})" /></td>`;
     }
     body += `</tr>`;
   });
@@ -115,8 +172,12 @@ function updateYearLabel(i, val) {
   yearLabels[i] = val;
 }
 function updateCell(key, i, val) {
-  const n = parseFloat(val);
-  finData[key][i] = val === "" ? null : isNaN(n) ? null : n;
+  finData[key][i] = parseFormatted(val);
+}
+// Dipanggil dari sel tabel data keuangan: format tampilan live + simpan nilai aslinya
+function handleFinCellInput(e, key, i) {
+  formatNumberLive(e);
+  updateCell(key, i, e.target.value);
 }
 
 function addYear() {
@@ -196,8 +257,8 @@ const WEIGHTS = { dcf: 0.3, per: 0.25, pbv: 0.2, graham: 0.15, peg: 0.1 };
 
 function calculate() {
   const emiten = document.getElementById("emiten").value || "Emiten";
-  const price = v("hargaSaatIni");
-  const sharesOut = v("sharesOut");
+  const price = vf("hargaSaatIni");
+  const sharesOut = vf("sharesOut");
   const discRate = v("discountRate") / 100 || 0.12;
   const termGrowthInput = v("terminalGrowth");
   const termGrowth = termGrowthInput > 0 ? termGrowthInput / 100 : 0.03;
@@ -523,9 +584,9 @@ function resetPL() {
 }
 
 function calculatePL() {
-  const hargaBeli = v("plHargaBeli");
+  const hargaBeli = vf("plHargaBeli");
   const lot = v("plLot");
-  const hargaJual = v("plHargaJual");
+  const hargaJual = vf("plHargaJual");
   const feeBeliPct = v("plFeeBeli") > 0 ? v("plFeeBeli") : 0.15;
   const feeJualPct = v("plFeeJual") > 0 ? v("plFeeJual") : 0.25;
 
@@ -573,9 +634,9 @@ function resetAverage() {
 
 function calculateAverage() {
   const lotLama = v("avgLotLama");
-  const hargaLama = v("avgHargaLama");
+  const hargaLama = vf("avgHargaLama");
   const lotBaru = v("avgLotBaru");
-  const hargaBaru = v("avgHargaBaru");
+  const hargaBaru = vf("avgHargaBaru");
 
   const modalLama = lotLama * 100 * hargaLama;
   const modalBaru = lotBaru * 100 * hargaBaru;

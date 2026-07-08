@@ -62,11 +62,11 @@
               </div>
               <div class="form-group">
                 <label>Harga Saham Saat Ini <span class="unit">(Rp)</span></label>
-                <input type="number" id="hargaSaatIni" placeholder="Contoh: 9500" />
+                <input type="text" inputmode="decimal" class="fmt-number" id="hargaSaatIni" placeholder="Contoh: 9.500" oninput="formatNumberLive(event)" />
               </div>
               <div class="form-group">
                 <label>Jumlah Saham Beredar <span class="unit">(juta lembar)</span></label>
-                <input type="number" id="sharesOut" placeholder="Contoh: 24000" />
+                <input type="text" inputmode="decimal" class="fmt-number" id="sharesOut" placeholder="Contoh: 24.000" oninput="formatNumberLive(event)" />
                 <small class="hint">Total saham beredar terbaru (bukan per tahun)</small>
               </div>
             </div>
@@ -241,7 +241,7 @@
             <div class="form-grid">
               <div class="form-group">
                 <label>Harga Beli / Average <span class="unit">(Rp per lembar)</span></label>
-                <input type="number" id="plHargaBeli" placeholder="Contoh: 2000" />
+                <input type="text" inputmode="decimal" class="fmt-number" id="plHargaBeli" placeholder="Contoh: 2.000" oninput="formatNumberLive(event)" />
               </div>
               <div class="form-group">
                 <label>Jumlah Lot Dimiliki <span class="unit">(1 lot = 100 lembar)</span></label>
@@ -249,7 +249,7 @@
               </div>
               <div class="form-group">
                 <label>Harga Jual / Prediksi <span class="unit">(Rp per lembar)</span></label>
-                <input type="number" id="plHargaJual" placeholder="Contoh: 2300" />
+                <input type="text" inputmode="decimal" class="fmt-number" id="plHargaJual" placeholder="Contoh: 2.300" oninput="formatNumberLive(event)" />
               </div>
               <div class="form-group">
                 <label>Fee Beli <span class="unit">(%, opsional)</span></label>
@@ -299,7 +299,7 @@
               </div>
               <div class="form-group">
                 <label>Harga Average Saat Ini <span class="unit">(Rp)</span></label>
-                <input type="number" id="avgHargaLama" placeholder="Contoh: 200" />
+                <input type="text" inputmode="decimal" class="fmt-number" id="avgHargaLama" placeholder="Contoh: 200" oninput="formatNumberLive(event)" />
               </div>
               <div class="form-group">
                 <label>Lot Tambahan yang Dibeli</label>
@@ -307,7 +307,7 @@
               </div>
               <div class="form-group">
                 <label>Harga Beli Tambahan <span class="unit">(Rp)</span></label>
-                <input type="number" id="avgHargaBaru" placeholder="Contoh: 190" />
+                <input type="text" inputmode="decimal" class="fmt-number" id="avgHargaBaru" placeholder="Contoh: 190" oninput="formatNumberLive(event)" />
               </div>
             </div>
             <button class="btn-calc" onclick="calculateAverage()"><span>🔄</span> Hitung Average Baru</button>
